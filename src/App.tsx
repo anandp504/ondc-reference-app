@@ -1,22 +1,30 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import './App.css';
 import DiscoverForm from './components/DiscoverForm';
 import CatalogView from './components/CatalogView';
-import { DiscoverRequest, CatalogResponse, RendererConfig } from './types';
+import type { DiscoverRequest, CatalogResponse, RendererConfig } from './types';
 
-// Import sample discover requests (local), but fetch catalogs/renderers from remote spec URLs
+// Import sample discover requests (local)
 import groceryDiscover from './data/grocery-discover.json';
 import pizzaDiscover from './data/pizza-discover.json';
 
-const GROCERY_CATALOG_URL =
-  'https://raw.githubusercontent.com/beckn/protocol-specifications-new/ondc-schema/examples/RetailGrocery/02_on_discover/grocery-catalog.json';
-const PIZZA_CATALOG_URL =
-  'https://raw.githubusercontent.com/beckn/protocol-specifications-new/ondc-schema/examples/RetailPizza/02_on_discover/pizza-catalog.json';
+// Import local catalog files for local testing
+import groceryCatalogLocal from './data/grocery-catalog-large.json';
+import pizzaCatalogLocal from './data/food-and-beverage-catalog-large.json';
 
+// Import local renderer files for local testing
+import groceryRendererLocal from './data/grocery-renderer.json';
+import pizzaRendererLocal from './data/pizza-renderer.json';
+
+// GitHub URLs for remote renderer fetching
 const GROCERY_RENDERER_URL =
   'https://raw.githubusercontent.com/beckn/protocol-specifications-new/ondc-schema/schema/GroceryItem/v1/renderer.json';
 const PIZZA_RENDERER_URL =
-  'https://raw.githubusercontent.com/beckn/protocol-specifications-new/ondc-schema/schema/PizzaItem/v1/renderer.json';
+  'https://raw.githubusercontent.com/beckn/protocol-specifications-new/ondc-schema/schema/FoodAndBeverageItem/v1/renderer.json';
+
+// Toggle between local and GitHub sources
+// Set VITE_USE_LOCAL_DATA=true in .env file or use the UI toggle
+const USE_LOCAL_DATA = import.meta.env.VITE_USE_LOCAL_DATA === 'true';
 
 function App() {
   const [currentCatalog, setCurrentCatalog] = useState<CatalogResponse | null>(null);
@@ -24,30 +32,43 @@ function App() {
   const [category, setCategory] = useState<'grocery' | 'pizza'>('grocery');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [useLocalCatalog, setUseLocalCatalog] = useState(USE_LOCAL_DATA);
+  const [useLocalRenderer, setUseLocalRenderer] = useState(USE_LOCAL_DATA);
 
-  // Helper to load catalog + renderer from remote URLs for a given category
-  const loadCatalogAndRenderer = async (activeCategory: 'grocery' | 'pizza') => {
+
+  const handleDiscover = async (catalogResponse: CatalogResponse | null, error: string | null) => {
     setIsLoading(true);
     setError(null);
-    try {
-      const isGrocery = activeCategory === 'grocery';
-      const [catalogRes, rendererRes] = await Promise.all([
-        fetch(isGrocery ? GROCERY_CATALOG_URL : PIZZA_CATALOG_URL),
-        fetch(isGrocery ? GROCERY_RENDERER_URL : PIZZA_RENDERER_URL),
-      ]);
 
-      if (!catalogRes.ok || !rendererRes.ok) {
-        throw new Error('Failed to load catalog or renderer from remote specification URLs');
+    try {
+      if (useLocalCatalog) {
+        // Use local catalog data
+        const isGrocery = category === 'grocery';
+        const localCatalog = (isGrocery ? groceryCatalogLocal : pizzaCatalogLocal) as unknown as CatalogResponse;
+        setCurrentCatalog(localCatalog);
+      } else {
+        // Use API response
+        if (error) {
+          setError(error);
+          setCurrentCatalog(null);
+          setCurrentRenderer(null);
+          return;
+        }
+
+        if (catalogResponse) {
+          setCurrentCatalog(catalogResponse);
+        } else {
+          setError('No catalog response received');
+          setCurrentCatalog(null);
+          return;
+        }
       }
 
-      const catalogJson = (await catalogRes.json()) as CatalogResponse;
-      const rendererJson = (await rendererRes.json()) as RendererConfig;
-
-      setCurrentCatalog(catalogJson);
-      setCurrentRenderer(rendererJson);
+      // Load the renderer based on category
+      await loadRenderer(category);
     } catch (e: any) {
       console.error(e);
-      setError(e?.message || 'Unexpected error while loading catalog');
+      setError(e?.message || 'Unexpected error');
       setCurrentCatalog(null);
       setCurrentRenderer(null);
     } finally {
@@ -55,11 +76,32 @@ function App() {
     }
   };
 
-  const handleDiscover = (request: DiscoverRequest) => {
-    // In a real app, `request` would be POSTed to a BPP. Here we just
-    // use it to trigger loading the appropriate sample catalog/renderer
-    // from the ondc-schema branch of the spec repo.
-    void loadCatalogAndRenderer(category);
+  // Helper to load only the renderer
+  const loadRenderer = async (activeCategory: 'grocery' | 'pizza') => {
+    try {
+      const isGrocery = activeCategory === 'grocery';
+      
+      if (useLocalRenderer) {
+        // Use local renderer file
+        const rendererJson = (isGrocery ? groceryRendererLocal : pizzaRendererLocal) as unknown as RendererConfig;
+        setCurrentRenderer(rendererJson);
+      } else {
+        // Fetch renderer from GitHub URL
+        const rendererRes = await fetch(isGrocery ? GROCERY_RENDERER_URL : PIZZA_RENDERER_URL);
+        
+        if (!rendererRes.ok) {
+          throw new Error('Failed to load renderer from remote specification URL');
+        }
+
+        const rendererJson = (await rendererRes.json()) as RendererConfig;
+        setCurrentRenderer(rendererJson);
+      }
+    } catch (e: any) {
+      console.error(e);
+      setError(e?.message || 'Unexpected error while loading renderer');
+      setCurrentRenderer(null);
+      throw e;
+    }
   };
 
   return (
@@ -84,9 +126,10 @@ function App() {
               Run sample Beckn <code>discover</code> requests for Grocery or Pizza and inspect the rendered catalog.
             </p>
             <DiscoverForm
-              onSubmit={handleDiscover}
+              onDiscover={handleDiscover}
               category={category}
               defaultRequest={category === 'grocery' ? (groceryDiscover as DiscoverRequest) : (pizzaDiscover as DiscoverRequest)}
+              useLocalCatalog={useLocalCatalog}
             />
             <div className="category-hint">
               <button
@@ -101,8 +144,37 @@ function App() {
                 className={`category-pill ${category === 'pizza' ? 'pill-active' : ''}`}
                 onClick={() => setCategory('pizza')}
               >
-                Pizza
+                Food & Beverage
               </button>
+            </div>
+            <div className="data-source-toggle" style={{ marginTop: '1rem', paddingTop: '1rem', borderTop: '1px solid #e5e7eb' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.875rem', color: '#6b7280' }}>
+                  <input
+                    type="checkbox"
+                    checked={useLocalCatalog}
+                    onChange={(e) => {
+                      setUseLocalCatalog(e.target.checked);
+                      setCurrentCatalog(null);
+                      setCurrentRenderer(null);
+                    }}
+                    style={{ cursor: 'pointer' }}
+                  />
+                  <span>Use local catalog data</span>
+                </label>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.875rem', color: '#6b7280' }}>
+                  <input
+                    type="checkbox"
+                    checked={useLocalRenderer}
+                    onChange={(e) => {
+                      setUseLocalRenderer(e.target.checked);
+                      setCurrentRenderer(null);
+                    }}
+                    style={{ cursor: 'pointer' }}
+                  />
+                  <span>Use local renderer</span>
+                </label>
+              </div>
             </div>
           </div>
         </section>
@@ -114,7 +186,7 @@ function App() {
               {!currentCatalog && !isLoading && !error && (
                 <p className="results-empty">Run a discover to see matching offers.</p>
               )}
-              {isLoading && <p className="results-empty">Loading catalog from spec repository…</p>}
+              {isLoading && <p className="results-empty">Loading {useLocalCatalog ? 'local catalog' : 'catalog from API'}…</p>}
               {error && <p className="results-empty" style={{ color: '#b91c1c' }}>{error}</p>}
             </div>
 

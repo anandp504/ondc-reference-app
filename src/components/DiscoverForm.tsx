@@ -1,14 +1,18 @@
 import { useState, useEffect } from 'react';
-import { DiscoverRequest } from '../types';
+import type { DiscoverRequest, CatalogResponse } from '../types';
 
 interface DiscoverFormProps {
-  onSubmit: (request: DiscoverRequest) => void;
+  onDiscover: (catalogResponse: CatalogResponse | null, error: string | null) => void;
   defaultRequest?: DiscoverRequest;
   category: 'grocery' | 'pizza';
+  useLocalCatalog?: boolean;
 }
 
-export default function DiscoverForm({ onSubmit, defaultRequest, category }: DiscoverFormProps) {
+const DISCOVER_API_URL = import.meta.env.VITE_DISCOVER_API_URL || '/api/beckn/discover';
+
+export default function DiscoverForm({ onDiscover, defaultRequest, category, useLocalCatalog = false }: DiscoverFormProps) {
   const [textSearch, setTextSearch] = useState(defaultRequest?.message.text_search || '');
+  const [isLoading, setIsLoading] = useState(false);
 
   // Keep the text search in sync with the selected category and default request,
   // so switching between Grocery and Pizza pre-populates the appropriate example.
@@ -18,49 +22,87 @@ export default function DiscoverForm({ onSubmit, defaultRequest, category }: Dis
     setTextSearch(defaultRequest?.message.text_search || fallback);
   }, [category, defaultRequest]);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
+    // Ensure text search is not empty (only if using API)
+    if (!useLocalCatalog && !textSearch.trim()) {
+      const fallback = category === 'grocery' ? 'organic rice basmati' : 'veg pizza margherita';
+      setTextSearch(fallback);
+      onDiscover(null, 'Search text cannot be empty');
+      return;
+    }
+
+    setIsLoading(true);
+    onDiscover(null, null); // Clear previous results
+
+    // If using local catalog, skip API call
+    if (useLocalCatalog) {
+      setIsLoading(false);
+      onDiscover(null, null); // Signal to use local catalog
+      return;
+    }
+
+    // Make API call
     const request: DiscoverRequest = {
       context: {
         version: '2.0.0',
         action: 'discover',
-        domain: 'beckn.one:deg:retail:*',
-        bap_id: category === 'grocery' ? 'grocery-app.example.com' : 'pizza-app.example.com',
-        bap_uri: category === 'grocery'
-          ? 'https://grocery-app.example.com/bap'
-          : 'https://pizza-app.example.com/bap',
-        transaction_id: `${category}-txn-001-${new Date().toISOString().split('T')[0]}`,
-        message_id: `${category}-msg-001-${new Date().toISOString().split('T')[0]}`,
+        domain: 'beckn.one:retail',
+        bap_id: 'sandbox-retail-np1.com',
+        bap_uri: 'https://sandbox-retail-np1.com/bap',
+        transaction_id: crypto.randomUUID(),
+        message_id: crypto.randomUUID(),
         timestamp: new Date().toISOString(),
         ttl: 'PT30S',
         schema_context: category === 'grocery'
-          ? ['https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/main/schema/GroceryItem/v1/context.jsonld']
-          : ['https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/main/schema/PizzaItem/v1/context.jsonld']
+          ? ['https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/draft/schema/GroceryItem/v1/context.jsonld#GroceryItem']
+          : ['https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/draft/schema/FoodAndBeverageItem/v1/context.jsonld#FoodAndBeverageItem']
       },
       message: {
-        text_search: textSearch,
-        spatial: [
-          {
-            op: 's_dwithin',
-            targets: "$['beckn:availableAt'][*]['geo']",
-            geometry: {
-              type: 'Point',
-              coordinates: [77.5946, 12.9716]
-            },
-            distanceMeters: 5000
-          }
-        ],
-        filters: {
-          type: 'jsonpath',
-          expression: category === 'grocery'
-            ? "$[?(@.beckn:itemAttributes.dietaryClassification == 'veg' && @.beckn:itemAttributes.category == 'PACKAGED_COMMODITIES')]"
-            : "$[?(@.beckn:itemAttributes.dietaryClassification == 'veg' && @.beckn:itemAttributes.category == 'PIZZA')]"
-        }
+        text_search: textSearch.trim()
       }
     };
 
-    onSubmit(request);
+    try {
+      console.log('Making API request to:', DISCOVER_API_URL);
+      console.log('Request payload:', JSON.stringify(request, null, 2));
+      
+      const response = await fetch(DISCOVER_API_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(request),
+      });
+
+      console.log('Response status:', response.status, response.statusText);
+      console.log('Response headers:', Object.fromEntries(response.headers.entries()));
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('Error response body:', errorText);
+        throw new Error(`API request failed: ${response.status} ${response.statusText}. ${errorText}`);
+      }
+
+      const catalogResponse = (await response.json()) as CatalogResponse;
+      console.log('Successfully received catalog response');
+      onDiscover(catalogResponse, null);
+    } catch (error: any) {
+      console.error('Discover API error:', error);
+      
+      // Provide more specific error messages
+      let errorMessage = 'Failed to fetch catalog from API';
+      if (error instanceof TypeError && error.message === 'Failed to fetch') {
+        errorMessage = 'Network error: Unable to connect to the API. This might be a CORS issue or the API server is unreachable.';
+      } else if (error?.message) {
+        errorMessage = error.message;
+      }
+      
+      onDiscover(null, errorMessage);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -73,10 +115,14 @@ export default function DiscoverForm({ onSubmit, defaultRequest, category }: Dis
           value={textSearch}
           onChange={(e) => setTextSearch(e.target.value)}
           placeholder={category === 'grocery' ? 'e.g., organic rice basmati' : 'e.g., veg pizza margherita'}
+          required={!useLocalCatalog}
+          disabled={isLoading || useLocalCatalog}
         />
       </div>
       
-      <button type="submit">Discover</button>
+      <button type="submit" disabled={isLoading || (!useLocalCatalog && !textSearch.trim())}>
+        {isLoading ? 'Discovering...' : 'Discover'}
+      </button>
     </form>
   );
 }

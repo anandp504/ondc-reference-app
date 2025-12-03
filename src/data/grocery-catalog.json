@@ -2,20 +2,18 @@
   "context": {
     "version": "2.0.0",
     "action": "on_discover",
-    "domain": "beckn.one:deg:retail:*",
+    "domain": "beckn.one:retail",
     "timestamp": "2025-01-27T10:00:05Z",
-    "transaction_id": "grocery-txn-001-2025-01-27",
-    "message_id": "grocery-msg-001-2025-01-27",
-    "bap_id": "grocery-app.example.com",
-    "bap_uri": "https://grocery-app.example.com/bap",
-    "bpp_id": "fresh-grocery-bpp.example.com",
-    "bpp_uri": "https://fresh-grocery-bpp.example.com/bpp",
+    "transaction_id": "2cd192f6-ada6-4c61-b33a-3a31129d8e6a",
+    "message_id": "7e0121e3-7ee4-46f9-bc66-e8368943c681",
+    "bpp_id": "sandbox-retail-np1.com",
+    "bpp_uri": "https://sandbox-retail-np1.com/bpp",
     "ttl": "PT30S"
   },
   "message": {
     "catalogs": [
       {
-        "@context": "https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/main/schema/core/v2/context.jsonld",
+        "@context": "https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/draft/schema/core/v2/context.jsonld",
         "@type": "beckn:Catalog",
         "beckn:id": "catalog-grocery-001",
         "beckn:descriptor": {
@@ -23,8 +21,8 @@
           "schema:name": "Fresh Grocery Store",
           "beckn:shortDesc": "Premium organic and fresh grocery products"
         },
-        "beckn:bppId": "fresh-grocery-bpp.example.com",
-        "beckn:bppUri": "https://fresh-grocery-bpp.example.com/bpp",
+        "beckn:bppId": "sandbox-retail-np1.com",
+        "beckn:bppUri": "https://sandbox-retail-np1.com/bpp",
         "beckn:validity": {
           "@type": "beckn:TimePeriod",
           "schema:startDate": "2025-01-27T00:00:00Z",
@@ -32,7 +30,7 @@
         },
         "beckn:items": [
           {
-            "@context": "https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/main/schema/core/v2/context.jsonld",
+            "@context": "https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/draft/schema/core/v2/context.jsonld",
             "@type": "beckn:Item",
             "beckn:id": "basmati-rice-1kg-001",
             "beckn:descriptor": {
@@ -40,7 +38,9 @@
               "schema:name": "Premium Basmati Rice (1 kg)",
               "beckn:shortDesc": "Aged basmati rice, long grain, aromatic",
               "beckn:longDesc": "Premium quality aged basmati rice, known for its long grains and aromatic fragrance. Perfect for biryanis and pulao.",
-              "schema:image": "https://images.pexels.com/photos/4110254/pexels-photo-4110254.jpeg?auto=compress&cs=tinysrgb&w=800"
+              "schema:image": [
+                "https://images.unsplash.com/photo-1603894584373-5ac82b2ae398?auto=format&fit=crop&w=800&q=80"
+              ]
             },
             "beckn:category": {
               "@type": "schema:CategoryCode",
@@ -84,7 +84,7 @@
               }
             },
             "beckn:itemAttributes": {
-              "@context": "https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/main/schema/GroceryItem/v1/context.jsonld",
+              "@context": "https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/draft/schema/GroceryItem/v1/context.jsonld",
               "@type": "GroceryItem",
               "category": "PACKAGED_COMMODITIES",
               "manufacturerOrPacker": {
@@ -143,7 +143,7 @@
             }
           },
           {
-            "@context": "https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/main/schema/core/v2/context.jsonld",
+            "@context": "https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/draft/schema/core/v2/context.jsonld",
             "@type": "beckn:Item",
             "beckn:id": "organic-toor-dal-500g-001",
             "beckn:descriptor": {
@@ -151,7 +151,9 @@
               "schema:name": "Organic Toor Dal (500g)",
               "beckn:shortDesc": "Certified organic split pigeon peas",
               "beckn:longDesc": "Certified organic toor dal, rich in protein and fiber. Perfect for traditional Indian dal recipes.",
-              "schema:image": "https://images.pexels.com/photos/4198025/pexels-photo-4198025.jpeg?auto=compress&cs=tinysrgb&w=800"
+              "schema:image": [
+                "https://images.unsplash.com/photo-1556679343-c7306c1976bc?auto=format&fit=crop&w=200&h=200&q=80"
+              ]
             },
             "beckn:category": {
               "@type": "schema:CategoryCode",
@@ -195,7 +197,7 @@
               }
             },
             "beckn:itemAttributes": {
-              "@context": "https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/main/schema/GroceryItem/v1/context.jsonld",
+              "@context": "https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/draft/schema/GroceryItem/v1/context.jsonld",
               "@type": "GroceryItem",
               "category": "PACKAGED_COMMODITIES",
               "manufacturerOrPacker": {
@@ -256,7 +258,7 @@
         ],
         "beckn:offers": [
           {
-            "@context": "https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/main/schema/core/v2/context.jsonld",
+            "@context": "https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/draft/schema/core/v2/context.jsonld",
             "@type": "beckn:Offer",
             "beckn:id": "offer-basmati-rice-1kg",
             "beckn:descriptor": {
@@ -268,7 +270,7 @@
             ],
             "beckn:price": {
               "currency": "INR",
-              "value": 180.0,
+              "value": 180,
               "applicableQuantity": {
                 "unitText": "Kilogram",
                 "unitCode": "KGM",
@@ -290,7 +292,7 @@
             "beckn:provider": "fresh-grocery-store"
           },
           {
-            "@context": "https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/main/schema/core/v2/context.jsonld",
+            "@context": "https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/draft/schema/core/v2/context.jsonld",
             "@type": "beckn:Offer",
             "beckn:id": "offer-organic-toor-dal-500g",
             "beckn:descriptor": {
@@ -302,7 +304,7 @@
             ],
             "beckn:price": {
               "currency": "INR",
-              "value": 95.0,
+              "value": 95,
               "applicableQuantity": {
                 "unitText": "Gram",
                 "unitCode": "GRM",
@@ -328,4 +330,3 @@
     ]
   }
 }
-

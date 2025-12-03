@@ -6,6 +6,14 @@ export default defineConfig({
   plugins: [react()],
   server: {
     port: 5173,
-    open: true
+    open: true,
+    proxy: {
+      '/api/beckn': {
+        target: 'https://34.93.141.21.sslip.io',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api\/beckn/, '/beckn'),
+        secure: false, // Allow self-signed certificates
+      }
+    }
   }
 })

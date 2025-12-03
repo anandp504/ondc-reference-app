@@ -35,6 +35,26 @@ export default function ItemCard({ item, catalog, rendererConfig, viewType = 'di
           });
         }
       }
+
+      // Color stars based on rating
+      const ratingContainers = containerRef.current.querySelectorAll('.rating-stars-container');
+      ratingContainers.forEach((container) => {
+        const ratingAttr = (container as HTMLElement).getAttribute('data-rating');
+        if (ratingAttr) {
+          const rating = parseFloat(ratingAttr);
+          const stars = container.querySelectorAll('.star');
+          stars.forEach((star, index) => {
+            const starIndex = index + 1;
+            if (rating >= starIndex) {
+              (star as HTMLElement).style.color = '#fbbf24'; // Full star - bright yellow
+            } else if (rating >= starIndex - 0.5) {
+              (star as HTMLElement).style.color = '#fcd34d'; // Half star - lighter yellow
+            } else {
+              (star as HTMLElement).style.color = '#e5e7eb'; // Empty star - gray
+            }
+          });
+        }
+      });
     }
   }, [renderedHtml, item, rendererConfig]);
 
