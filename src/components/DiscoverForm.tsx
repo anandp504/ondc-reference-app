@@ -3,6 +3,7 @@ import type { DiscoverRequest, CatalogResponse } from '../types';
 
 interface DiscoverFormProps {
   onDiscover: (catalogResponse: CatalogResponse | null, error: string | null) => void;
+  onLoading?: (isLoading: boolean) => void;
   defaultRequest?: DiscoverRequest;
   category: 'grocery' | 'pizza';
   useLocalCatalog?: boolean;
@@ -12,7 +13,7 @@ const DISCOVER_API_URL = import.meta.env.VITE_DISCOVER_API_URL || '/api/beckn/di
 
 type SearchMode = 'filters' | 'text';
 
-export default function DiscoverForm({ onDiscover, defaultRequest, category, useLocalCatalog = false }: DiscoverFormProps) {
+export default function DiscoverForm({ onDiscover, onLoading, defaultRequest, category, useLocalCatalog = false }: DiscoverFormProps) {
   const [searchMode, setSearchMode] = useState<SearchMode>('filters');
   const [textSearch, setTextSearch] = useState(defaultRequest?.message.text_search || '');
   const [expression, setExpression] = useState('$[?(@.beckn:itemAttributes.nutritionalInfo.nutrient=="Sodium" && @.beckn:itemAttributes.dietaryClassification == "veg")]');
@@ -109,11 +110,12 @@ export default function DiscoverForm({ onDiscover, defaultRequest, category, use
     }
 
     setIsLoading(true);
-    onDiscover(null, null); // Clear previous results
+    onLoading?.(true); // Notify parent that we're loading
 
     // If using local catalog, skip API call
     if (useLocalCatalog) {
       setIsLoading(false);
+      onLoading?.(false);
       onDiscover(null, null); // Signal to use local catalog
       return;
     }
@@ -205,6 +207,7 @@ export default function DiscoverForm({ onDiscover, defaultRequest, category, use
       onDiscover(null, errorMessage);
     } finally {
       setIsLoading(false);
+      onLoading?.(false);
     }
   };
 
