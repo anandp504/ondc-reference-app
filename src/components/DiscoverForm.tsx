@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import type { DiscoverRequest, CatalogResponse } from '../types';
 import { generateUUID } from '../utils/uuid';
 
@@ -14,22 +14,67 @@ const DISCOVER_API_URL = import.meta.env.VITE_DISCOVER_API_URL || '/api/beckn/di
 
 type SearchMode = 'filters' | 'text';
 
+// Helper function to get default expression based on category
+const getDefaultExpression = (category: 'grocery' | 'pizza'): string => {
+  if (category === 'grocery') {
+    return '$[?(@.beckn:itemAttributes.nutritionalInfo.nutrient=="Sodium" && @.beckn:itemAttributes.dietaryClassification == "veg")]';
+  } else {
+    return "$[?(@.beckn:itemAttributes.size=='Regular' && @.beckn:itemAttributes.toppings[*] == 'Olives')]";
+  }
+};
+
 export default function DiscoverForm({ onDiscover, onLoading, defaultRequest, category, useLocalCatalog = false }: DiscoverFormProps) {
-  const [searchMode, setSearchMode] = useState<SearchMode>('filters');
+  // Use ref to persist searchMode across component remounts and category changes
+  const searchModeRef = useRef<SearchMode>(
+    (() => {
+      // Try to restore from sessionStorage if available
+      const saved = sessionStorage.getItem('discoverForm_searchMode');
+      return (saved === 'text' || saved === 'filters') ? saved as SearchMode : 'filters';
+    })()
+  );
+  
+  const [searchMode, setSearchMode] = useState<SearchMode>(searchModeRef.current);
   const [textSearch, setTextSearch] = useState(defaultRequest?.message.text_search || '');
-  const [expression, setExpression] = useState('$[?(@.beckn:itemAttributes.nutritionalInfo.nutrient=="Sodium" && @.beckn:itemAttributes.dietaryClassification == "veg")]');
+  const [expression, setExpression] = useState(() => getDefaultExpression(category));
   const [coordinates, setCoordinates] = useState('12.9716,77.5946');
   const [radius, setRadius] = useState(5000);
   const [coordinateError, setCoordinateError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  // Keep the text search in sync with the selected category and default request,
-  // so switching between Grocery and Pizza pre-populates the appropriate example.
+  // Sync searchMode changes to ref and sessionStorage
+  const updateSearchMode = (mode: SearchMode) => {
+    searchModeRef.current = mode;
+    sessionStorage.setItem('discoverForm_searchMode', mode);
+    setSearchMode(mode);
+  };
+
+  // Keep the form fields in sync with the selected category and default request,
+  // so switching between Grocery and Pizza pre-populates the appropriate examples.
+  // Note: We preserve searchMode across category changes to maintain user's choice
+  // This works for both Filters and Text Search modes
   useEffect(() => {
-    const fallback =
+    // Restore searchMode from ref if it differs (handles remounts and category changes)
+    if (searchModeRef.current !== searchMode) {
+      setSearchMode(searchModeRef.current);
+    }
+
+    // Set text search default
+    const textFallback =
       category === 'grocery' ? 'organic rice basmati' : 'veg pizza margherita';
-    setTextSearch(defaultRequest?.message.text_search || fallback);
-  }, [category, defaultRequest]);
+    const newTextSearch = defaultRequest?.message.text_search || textFallback;
+    setTextSearch(newTextSearch);
+
+    // Set JSONPath expression default based on category (always use category-based default)
+    setExpression(getDefaultExpression(category));
+
+    // Set coordinates default (same for both categories)
+    setCoordinates('12.9716,77.5946');
+    
+    // Note: We intentionally don't reset searchMode here to preserve user's choice
+    // The searchMode state (whether 'filters' or 'text') persists across category changes
+    // This ensures consistent behavior whether you're in Filters or Text Search mode
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [category]); // Only depend on category, not defaultRequest to avoid unnecessary resets
 
   // Validate coordinates input (comma-separated lat,long)
   const validateCoordinates = (value: string): boolean => {
@@ -241,7 +286,7 @@ export default function DiscoverForm({ onDiscover, onLoading, defaultRequest, ca
         <button
           type="button"
           className={`toggle-option ${searchMode === 'filters' ? 'toggle-active' : ''}`}
-          onClick={() => setSearchMode('filters')}
+          onClick={() => updateSearchMode('filters')}
           disabled={isLoading}
         >
           Filters
@@ -249,7 +294,7 @@ export default function DiscoverForm({ onDiscover, onLoading, defaultRequest, ca
         <button
           type="button"
           className={`toggle-option ${searchMode === 'text' ? 'toggle-active' : ''}`}
-          onClick={() => setSearchMode('text')}
+          onClick={() => updateSearchMode('text')}
           disabled={isLoading}
         >
           Text Search
@@ -281,7 +326,9 @@ export default function DiscoverForm({ onDiscover, onLoading, defaultRequest, ca
               id="expression"
               value={expression}
               onChange={(e) => setExpression(e.target.value)}
-              placeholder='e.g., $[?(@.beckn:itemAttributes.nutritionalInfo.nutrient==&quot;Sodium&quot; && @.beckn:itemAttributes.dietaryClassification == &quot;veg&quot;)]'
+              placeholder={category === 'grocery' 
+                ? 'e.g., $[?(@.beckn:itemAttributes.nutritionalInfo.nutrient=="Sodium" && @.beckn:itemAttributes.dietaryClassification == "veg")]'
+                : 'e.g., $[?(@.beckn:itemAttributes.size==\'Regular\' && @.beckn:itemAttributes.toppings[*] == \'Olives\')]'}
               rows={6}
               disabled={isLoading || useLocalCatalog}
               style={{ fontFamily: 'monospace', fontSize: '0.875rem' }}
