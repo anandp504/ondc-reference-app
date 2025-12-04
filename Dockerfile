@@ -7,8 +7,8 @@ FROM node:18-alpine AS builder
 # Set working directory
 WORKDIR /app
 
-# Copy package files
-COPY package*.json ./
+# Copy package files (explicitly include package-lock.json for npm ci)
+COPY package.json package-lock.json ./
 
 # Install dependencies (including devDependencies for build)
 RUN npm ci

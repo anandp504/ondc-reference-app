@@ -11,6 +11,8 @@ dist-ssr
 build
 .cache
 
+# Note: package-lock.json should NOT be ignored - it's needed for npm ci
+
 # Git
 .git
 .gitignore
