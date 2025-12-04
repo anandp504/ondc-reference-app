@@ -232,10 +232,11 @@ export default function ONDCAdmin() {
     };
   };
 
-  const updateCatalogWithCredentials = async (
+  const updateCatalogWithCredentialsInternal = async (
     credentialType: 'provider' | 'item',
     credentialData: CredentialResponse,
-    providerId?: string,
+    providerId: string,
+    catalogData: CatalogResponse,
     itemIds?: string[]
   ) => {
     try {
@@ -252,10 +253,10 @@ export default function ONDCAdmin() {
 
       if (credentialType === 'provider') {
         // Update all items for the provider
-        if (!catalogResponse || !providerId) return;
+        if (!catalogData || !providerId) return;
         
-        catalogResponse.message.catalogs.forEach(catalog => {
-          catalog['beckn:items']?.forEach(item => {
+        catalogData.message.catalogs.forEach((catalog: any) => {
+          catalog['beckn:items']?.forEach((item: any) => {
             if (item['beckn:provider']?.['beckn:id'] === providerId) {
               items.push({
                 '@context': 'https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/draft/schema/core/v2/context.jsonld',
@@ -289,10 +290,10 @@ export default function ONDCAdmin() {
         });
       } else {
         // Update specific items
-        if (!catalogResponse || !itemIds || itemIds.length === 0) return;
+        if (!catalogData || !itemIds || itemIds.length === 0) return;
         
-        catalogResponse.message.catalogs.forEach(catalog => {
-          catalog['beckn:items']?.forEach(item => {
+        catalogData.message.catalogs.forEach((catalog: any) => {
+          catalog['beckn:items']?.forEach((item: any) => {
             if (itemIds.includes(item['beckn:id'])) {
               items.push({
                 '@context': 'https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/draft/schema/core/v2/context.jsonld',
@@ -332,7 +333,7 @@ export default function ONDCAdmin() {
       }
 
       // Get catalog ID from the first catalog
-      const catalogId = catalogResponse?.message.catalogs[0]?.['beckn:id'] || 'catalog';
+      const catalogId = catalogData?.message.catalogs[0]?.['beckn:id'] || 'catalog';
 
       const patchRequest = {
         context: {
@@ -383,6 +384,20 @@ export default function ONDCAdmin() {
     }
   };
 
+  const updateCatalogWithCredentials = async (
+    credentialType: 'provider' | 'item',
+    credentialData: CredentialResponse,
+    providerId?: string,
+    itemIds?: string[]
+  ) => {
+    const catalogData = catalogResponse;
+    if (!catalogData || !providerId) {
+      console.warn('Catalog data not available for update');
+      return;
+    }
+    return updateCatalogWithCredentialsInternal(credentialType, credentialData, providerId, catalogData, itemIds);
+  };
+
   const issueProviderCredentials = async (providerId: string, providerName: string) => {
     setIsIssuingCredentials(true);
     setError(null);
@@ -414,8 +429,50 @@ export default function ONDCAdmin() {
       setSuccessMessage(`Successfully issued credentials for ${providerName}`);
       console.log('Provider credentials issued:', result);
 
-      // Update catalog with provider credentials for all items
-      await updateCatalogWithCredentials('provider', result, providerId);
+      // Fetch items for the provider first, then update catalog
+      try {
+        // Fetch catalog data for this provider
+        const category = providerId === 'fresh-grocery-store' ? 'grocery' : 'pizza';
+        const tempRequest: DiscoverRequest = {
+          context: {
+            version: '2.0.0',
+            action: 'discover',
+            domain: 'beckn.one:retail',
+            bap_id: 'sandbox-retail-np1.com',
+            bap_uri: 'https://sandbox-retail-np1.com/bap',
+            transaction_id: generateUUID(),
+            message_id: generateUUID(),
+            timestamp: new Date().toISOString(),
+            ttl: 'PT30S',
+            schema_context: category === 'grocery'
+              ? ['https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/draft/schema/GroceryItem/v1/context.jsonld#GroceryItem']
+              : ['https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/draft/schema/FoodAndBeverageItem/v1/context.jsonld#FoodAndBeverageItem']
+          },
+          message: {
+            filters: {
+              type: 'jsonpath',
+              expression: `$[?(@.beckn:provider.beckn:id=='${providerId}')]`
+            }
+          }
+        };
+        
+        const catalogFetchResponse = await fetch(DISCOVER_API_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(tempRequest),
+        });
+        
+        if (catalogFetchResponse.ok) {
+          const catalogData = (await catalogFetchResponse.json()) as CatalogResponse;
+          console.log('Fetched catalog data for provider update:', catalogData);
+          await updateCatalogWithCredentialsInternal('provider', result, providerId, catalogData);
+        } else {
+          console.warn('Failed to fetch catalog data for provider update');
+        }
+      } catch (catalogError) {
+        console.error('Error updating catalog:', catalogError);
+        // Don't fail the credential issuance if catalog update fails
+      }
     } catch (error: any) {
       console.error('Error issuing provider credentials:', error);
       setError(error?.message || 'Failed to issue provider credentials');
@@ -574,6 +631,67 @@ export default function ONDCAdmin() {
         {/* Provider Credentials Section */}
         {credentialType === 'provider' && (
           <div className="credentials-section">
+            {error && (
+              <div className="error-message">
+                {error}
+              </div>
+            )}
+
+            {successMessage && (
+              <div className="success-message">
+                {successMessage}
+              </div>
+            )}
+
+            {issuedCredentials.length > 0 && (
+              <div className="issued-credentials-section">
+                <h3 className="section-title">Issued Credentials</h3>
+                <div className="credentials-list">
+                  {issuedCredentials.map((cred, index) => (
+                    <div key={index} className="credential-card">
+                      <div className="credential-main-content">
+                        <div className="credential-info">
+                          <div className="credential-type-badge">
+                            {cred.credentialType === 'ONDCFiveStarSeller' ? '⭐ Five Star Seller' : '🚀 Fast Moving Product'}
+                          </div>
+                          <div className="credential-details">
+                            <div className="credential-message">
+                              {cred.message}
+                            </div>
+                            <div className="credential-meta">
+                              <div className="credential-meta-item">
+                                <span className="meta-label">Issued:</span>
+                                <span className="meta-value">{new Date(cred.created).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}</span>
+                              </div>
+                              <div className="credential-meta-item">
+                                <span className="meta-label">ID:</span>
+                                <span className="meta-value credential-id">{cred.credentialId}</span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <a
+                          href={cred.viewUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="view-pdf-icon"
+                          title="View PDF"
+                        >
+                          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M14 2H6C5.46957 2 4.96086 2.21071 4.58579 2.58579C4.21071 2.96086 4 3.46957 4 4V20C4 20.5304 4.21071 21.0391 4.58579 21.4142C4.96086 21.7893 5.46957 22 6 22H18C18.5304 22 19.0391 21.7893 19.4142 21.4142C19.7893 21.0391 20 20.5304 20 20V8L14 2Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                            <path d="M14 2V8H20" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                            <path d="M16 13H8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                            <path d="M16 17H8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                            <path d="M10 9H9H8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                          </svg>
+                        </a>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
             <h3 className="section-title">Select Provider to Issue Credentials</h3>
             <div className="providers-grid">
               {PROVIDERS.map((provider) => (
