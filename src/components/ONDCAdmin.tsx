@@ -10,6 +10,7 @@ import type { RendererConfig } from '../types';
 
 const DISCOVER_API_URL = import.meta.env.VITE_DISCOVER_API_URL || '/api/beckn/discover';
 const CREDENTIALS_API_URL = import.meta.env.VITE_CREDENTIALS_API_URL || '/api/credentials';
+const CATALOG_PUBLISH_API_URL = import.meta.env.VITE_CATALOG_PUBLISH_API_URL || '/api/beckn/v2/catalog/publish';
 
 type CredentialType = 'provider' | 'item';
 
@@ -127,7 +128,7 @@ export default function ONDCAdmin() {
         message_id: generateUUID(),
         timestamp: new Date().toISOString(),
         ttl: 'PT30S',
-        schema_context: category === 'grocery'
+          schema_context: category === 'grocery'
           ? ['https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/draft/schema/GroceryItem/v1/context.jsonld#GroceryItem']
           : ['https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/draft/schema/FoodAndBeverageItem/v1/context.jsonld#FoodAndBeverageItem']
       },
@@ -140,6 +141,9 @@ export default function ONDCAdmin() {
     };
 
     try {
+      console.log('Fetching items for provider:', providerId);
+      console.log('API request:', JSON.stringify(request, null, 2));
+      
       const response = await fetch(DISCOVER_API_URL, {
         method: 'POST',
         headers: {
@@ -150,10 +154,17 @@ export default function ONDCAdmin() {
 
       if (!response.ok) {
         const errorText = await response.text();
+        console.error('API error response:', errorText);
         throw new Error(`API request failed: ${response.status} ${response.statusText}. ${errorText}`);
       }
 
       const catalogResponse = (await response.json()) as CatalogResponse;
+      console.log('Catalog response received:', catalogResponse);
+      console.log('Number of catalogs:', catalogResponse.message.catalogs.length);
+      catalogResponse.message.catalogs.forEach((catalog, idx) => {
+        console.log(`Catalog ${idx} items count:`, catalog['beckn:items']?.length || 0);
+      });
+      
       setCatalogResponse(catalogResponse);
     } catch (error: any) {
       console.error('Error fetching items:', error);
@@ -221,6 +232,157 @@ export default function ONDCAdmin() {
     };
   };
 
+  const updateCatalogWithCredentials = async (
+    credentialType: 'provider' | 'item',
+    credentialData: CredentialResponse,
+    providerId?: string,
+    itemIds?: string[]
+  ) => {
+    try {
+      // Determine category based on provider
+      const provider = PROVIDERS.find(p => p['beckn:id'] === providerId);
+      const category = provider?.['beckn:id'] === 'fresh-grocery-store' ? 'grocery' : 'pizza';
+      const schemaContext = category === 'grocery'
+        ? 'https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/draft/schema/GroceryItem/v1/context.jsonld'
+        : 'https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/draft/schema/FoodAndBeverageItem/v1/context.jsonld';
+      const itemType = category === 'grocery' ? 'GroceryItem' : 'FoodAndBeverageItem';
+
+      // Build catalog items
+      const items: any[] = [];
+
+      if (credentialType === 'provider') {
+        // Update all items for the provider
+        if (!catalogResponse || !providerId) return;
+        
+        catalogResponse.message.catalogs.forEach(catalog => {
+          catalog['beckn:items']?.forEach(item => {
+            if (item['beckn:provider']?.['beckn:id'] === providerId) {
+              items.push({
+                '@context': 'https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/draft/schema/core/v2/context.jsonld',
+                '@type': 'beckn:Item',
+                'beckn:id': item['beckn:id'],
+                'beckn:descriptor': item['beckn:descriptor'] || {
+                  '@type': 'beckn:Descriptor'
+                },
+                'beckn:provider': {
+                  'beckn:id': providerId,
+                  'beckn:descriptor': {
+                    '@type': 'beckn:Descriptor',
+                    'schema:name': provider?.['beckn:descriptor']['schema:name'] || ''
+                  }
+                },
+                'beckn:itemAttributes': {
+                  ...(item['beckn:itemAttributes'] || {}),
+                  '@context': schemaContext,
+                  '@type': itemType,
+                  credentials: {
+                    provider: {
+                      url: credentialData.pdf.viewUrl,
+                      id: credentialData.credentialId,
+                      description: credentialData.message
+                    }
+                  }
+                }
+              });
+            }
+          });
+        });
+      } else {
+        // Update specific items
+        if (!catalogResponse || !itemIds || itemIds.length === 0) return;
+        
+        catalogResponse.message.catalogs.forEach(catalog => {
+          catalog['beckn:items']?.forEach(item => {
+            if (itemIds.includes(item['beckn:id'])) {
+              items.push({
+                '@context': 'https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/draft/schema/core/v2/context.jsonld',
+                '@type': 'beckn:Item',
+                'beckn:id': item['beckn:id'],
+                'beckn:descriptor': item['beckn:descriptor'] || {
+                  '@type': 'beckn:Descriptor'
+                },
+                'beckn:provider': item['beckn:provider'] || {
+                  'beckn:id': '',
+                  'beckn:descriptor': {
+                    '@type': 'beckn:Descriptor',
+                    'schema:name': ''
+                  }
+                },
+                'beckn:itemAttributes': {
+                  ...(item['beckn:itemAttributes'] || {}),
+                  '@context': schemaContext,
+                  '@type': itemType,
+                  credentials: {
+                    item: {
+                      url: credentialData.pdf.viewUrl,
+                      id: credentialData.credentialId,
+                      description: credentialData.message
+                    }
+                  }
+                }
+              });
+            }
+          });
+        });
+      }
+
+      if (items.length === 0) {
+        console.warn('No items to update in catalog');
+        return;
+      }
+
+      // Get catalog ID from the first catalog
+      const catalogId = catalogResponse?.message.catalogs[0]?.['beckn:id'] || 'catalog';
+
+      const patchRequest = {
+        context: {
+          version: '2.0.0',
+          action: 'catalog_publish',
+          domain: 'beckn.one:retail',
+          timestamp: new Date().toISOString(),
+          transaction_id: generateUUID(),
+          message_id: generateUUID(),
+          bpp_id: 'sandbox-retail-np1.com',
+          bpp_uri: 'https://sandbox-retail-np1.com/bpp',
+          ttl: 'PT30S'
+        },
+        message: {
+          catalogs: [
+            {
+              '@context': 'https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/draft/schema/core/v2/context.jsonld',
+              '@type': 'beckn:Catalog',
+              'beckn:id': catalogId,
+              'beckn:bppId': 'sandbox-retail-np1.com',
+              'beckn:bppUri': 'https://sandbox-retail-np1.com/bpp',
+              'beckn:descriptor': {
+                '@type': 'beckn:Descriptor'
+              },
+              'beckn:items': items
+            }
+          ]
+        }
+      };
+
+      const response = await fetch(CATALOG_PUBLISH_API_URL, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(patchRequest),
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`Failed to update catalog: ${response.status} ${response.statusText}. ${errorText}`);
+      }
+
+      console.log('Catalog updated successfully with credentials');
+    } catch (error: any) {
+      console.error('Error updating catalog:', error);
+      // Don't throw error here, just log it - credential issuance was successful
+    }
+  };
+
   const issueProviderCredentials = async (providerId: string, providerName: string) => {
     setIsIssuingCredentials(true);
     setError(null);
@@ -251,6 +413,9 @@ export default function ONDCAdmin() {
       setIssuedCredentials(prev => [...prev, parsedCredential]);
       setSuccessMessage(`Successfully issued credentials for ${providerName}`);
       console.log('Provider credentials issued:', result);
+
+      // Update catalog with provider credentials for all items
+      await updateCatalogWithCredentials('provider', result, providerId);
     } catch (error: any) {
       console.error('Error issuing provider credentials:', error);
       setError(error?.message || 'Failed to issue provider credentials');
@@ -269,20 +434,25 @@ export default function ONDCAdmin() {
     try {
       // Get all selected items from catalogs
       const itemsToIssue: any[] = [];
+      const itemIdOrder: string[] = [];
+      const provider = PROVIDERS.find(p => p['beckn:id'] === selectedProvider);
+      const brandName = provider?.['beckn:descriptor']['schema:name'] || '';
+      
       catalogResponse.message.catalogs.forEach(catalog => {
         catalog['beckn:items']?.forEach(item => {
           if (selectedItems.has(item['beckn:id'])) {
             // Determine category based on provider
-            const provider = PROVIDERS.find(p => p['beckn:id'] === selectedProvider);
             const category = provider?.['beckn:id'] === 'fresh-grocery-store' ? 'Grocery' : 'Food & Beverage';
             
             itemsToIssue.push({
               type: 'product',
               productName: item['beckn:descriptor']['schema:name'],
+              brandName: brandName,
               productCategory: category,
               rating: item['beckn:rating']?.['beckn:ratingValue'] || 0,
               ratingCount: item['beckn:rating']?.['beckn:ratingCount'] || 0
             });
+            itemIdOrder.push(item['beckn:id']);
           }
         });
       });
@@ -301,6 +471,7 @@ export default function ONDCAdmin() {
       const responses = await Promise.all(promises);
       const errors: string[] = [];
       const issuedCreds: IssuedCredential[] = [];
+      const credentialResults: CredentialResponse[] = [];
 
       for (let i = 0; i < responses.length; i++) {
         if (!responses[i].ok) {
@@ -310,6 +481,7 @@ export default function ONDCAdmin() {
           const result = (await responses[i].json()) as CredentialResponse;
           const parsedCredential = parseCredentialResponse(result);
           issuedCreds.push(parsedCredential);
+          credentialResults.push(result);
         }
       }
 
@@ -326,6 +498,15 @@ export default function ONDCAdmin() {
         setError(`Some credentials failed to issue:\n${errors.join('\n')}`);
       } else {
         setSuccessMessage(`Successfully issued credentials for ${itemsToIssue.length} product(s)`);
+      }
+
+      // Update catalog with item credentials for each item
+      if (credentialResults.length > 0 && selectedProvider) {
+        for (let i = 0; i < credentialResults.length && i < itemIdOrder.length; i++) {
+          if (itemIdOrder[i] && credentialResults[i]) {
+            await updateCatalogWithCredentials('item', credentialResults[i], selectedProvider, [itemIdOrder[i]]);
+          }
+        }
       }
       
       setSelectedItems(new Set());
