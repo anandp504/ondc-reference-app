@@ -225,6 +225,15 @@ export default function DiscoverForm({ onDiscover, onLoading, defaultRequest, ca
     }
   };
 
+  const formatDistance = (meters: number): string => {
+    if (meters <= 1000) {
+      return `${meters.toLocaleString()} meters`;
+    }
+    const km = meters / 1000;
+    // Show 1 decimal place if not a whole number, otherwise show as integer
+    return km % 1 === 0 ? `${km} km` : `${km.toFixed(1)} km`;
+  };
+
   return (
     <form onSubmit={handleSubmit} className="discover-form">
       {/* Toggle Bar */}
@@ -304,7 +313,7 @@ export default function DiscoverForm({ onDiscover, onLoading, defaultRequest, ca
 
           <div className="form-group">
             <label htmlFor="radius">
-              Radius: {radius.toLocaleString()} meters
+              Distance within: {formatDistance(radius)}
             </label>
             <input
               id="radius"
