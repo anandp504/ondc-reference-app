@@ -1,16 +1,17 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import './ONDCAdmin.css';
 import { generateUUID } from '../utils/uuid';
 import type { DiscoverRequest, CatalogResponse } from '../types';
 import LoadingSpinner from './LoadingSpinner';
 import ItemCard from './ItemCard';
-import groceryRendererLocal from '../data/grocery-renderer.json';
-import pizzaRendererLocal from '../data/pizza-renderer.json';
 import type { RendererConfig } from '../types';
 
 const DISCOVER_API_URL = import.meta.env.VITE_DISCOVER_API_URL || '/api/beckn/discover';
 const CREDENTIALS_API_URL = import.meta.env.VITE_CREDENTIALS_API_URL || '/api/credentials';
 const CATALOG_PUBLISH_API_URL = import.meta.env.VITE_CATALOG_PUBLISH_API_URL || '/api/beckn/v2/catalog/publish';
+
+const GROCERY_RENDERER_URL = 'https://raw.githubusercontent.com/beckn/protocol-specifications-new/ondc-schema/schema/GroceryItem/v1/renderer.json';
+const PIZZA_RENDERER_URL = 'https://raw.githubusercontent.com/beckn/protocol-specifications-new/ondc-schema/schema/FoodAndBeverageItem/v1/renderer.json';
 
 type CredentialType = 'provider' | 'item';
 
@@ -109,6 +110,7 @@ export default function ONDCAdmin() {
   const [isIssuingCredentials, setIsIssuingCredentials] = useState(false);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [issuedCredentials, setIssuedCredentials] = useState<IssuedCredential[]>([]);
+  const [currentRenderer, setCurrentRenderer] = useState<RendererConfig | null>(null);
 
   const fetchItemsByProvider = async (providerId: string) => {
     setIsLoading(true);
@@ -198,11 +200,16 @@ export default function ONDCAdmin() {
     const allItemIds = new Set<string>();
     catalogResponse.message.catalogs.forEach(catalog => {
       catalog['beckn:items']?.forEach(item => {
-        allItemIds.add(item['beckn:id']);
+        // Only include items that don't already have item credentials
+        const itemAttributes = item['beckn:itemAttributes'] as any;
+        const hasItemCredential = itemAttributes?.credentials?.item?.url;
+        if (!hasItemCredential) {
+          allItemIds.add(item['beckn:id']);
+        }
       });
     });
     
-    if (selectedItems.size === allItemIds.size) {
+    if (selectedItems.size === allItemIds.size && allItemIds.size > 0) {
       setSelectedItems(new Set());
     } else {
       setSelectedItems(allItemIds);
@@ -575,11 +582,31 @@ export default function ONDCAdmin() {
     }
   };
 
-  const getRendererConfig = (): RendererConfig => {
-    const provider = PROVIDERS.find(p => p['beckn:id'] === selectedProvider);
-    const isGrocery = provider?.['beckn:id'] === 'fresh-grocery-store';
-    return (isGrocery ? groceryRendererLocal : pizzaRendererLocal) as unknown as RendererConfig;
+  const loadRenderer = async (category: 'grocery' | 'pizza') => {
+    try {
+      const rendererUrl = category === 'grocery' ? GROCERY_RENDERER_URL : PIZZA_RENDERER_URL;
+      const rendererRes = await fetch(rendererUrl);
+      
+      if (!rendererRes.ok) {
+        throw new Error('Failed to load renderer from GitHub');
+      }
+
+      const rendererJson = (await rendererRes.json()) as RendererConfig;
+      setCurrentRenderer(rendererJson);
+    } catch (e: any) {
+      console.error('Error loading renderer:', e);
+      setError(e?.message || 'Failed to load renderer');
+    }
   };
+
+  useEffect(() => {
+    // Load renderer when provider is selected
+    if (selectedProvider) {
+      const provider = PROVIDERS.find(p => p['beckn:id'] === selectedProvider);
+      const category = provider?.['beckn:id'] === 'fresh-grocery-store' ? 'grocery' : 'pizza';
+      loadRenderer(category);
+    }
+  }, [selectedProvider]);
 
   const getAllItemsCount = (): number => {
     if (!catalogResponse) return 0;
@@ -898,26 +925,36 @@ export default function ONDCAdmin() {
                             )}
                           </div>
                           <div className="items-grid">
-                            {catalog['beckn:items']?.map((item) => (
-                              <div key={item['beckn:id']} className="selectable-item-wrapper">
-                                <label className="item-checkbox-label">
-                                  <input
-                                    type="checkbox"
-                                    checked={selectedItems.has(item['beckn:id'])}
-                                    onChange={() => handleItemToggle(item['beckn:id'])}
-                                    className="item-checkbox"
-                                  />
-                                  <div className={`item-card-wrapper ${selectedItems.has(item['beckn:id']) ? 'selected' : ''}`}>
-                                    <ItemCard
-                                      item={item}
-                                      catalog={catalog}
-                                      rendererConfig={getRendererConfig()}
-                                      viewType="discoveryCard"
+                            {catalog['beckn:items']?.map((item) => {
+                              const itemAttributes = item['beckn:itemAttributes'] as any;
+                              const hasItemCredential = itemAttributes?.credentials?.item?.url;
+                              const isDisabled = !!hasItemCredential;
+                              
+                              return (
+                                <div key={item['beckn:id']} className="selectable-item-wrapper">
+                                  <label className={`item-checkbox-label ${isDisabled ? 'disabled' : ''}`}>
+                                    <input
+                                      type="checkbox"
+                                      checked={selectedItems.has(item['beckn:id'])}
+                                      onChange={() => handleItemToggle(item['beckn:id'])}
+                                      className="item-checkbox"
+                                      disabled={isDisabled}
+                                      title={isDisabled ? 'This item already has a product credential' : ''}
                                     />
-                                  </div>
-                                </label>
-                              </div>
-                            ))}
+                                    <div className={`item-card-wrapper ${selectedItems.has(item['beckn:id']) ? 'selected' : ''} ${isDisabled ? 'has-credential' : ''}`}>
+                                      {currentRenderer && (
+                                        <ItemCard
+                                          item={item}
+                                          catalog={catalog}
+                                          rendererConfig={currentRenderer}
+                                          viewType="discoveryCard"
+                                        />
+                                      )}
+                                    </div>
+                                  </label>
+                                </div>
+                              );
+                            })}
                           </div>
                         </div>
                       ))}
