@@ -15,7 +15,13 @@ export default function BPPAdmin() {
     const fetchTunnelingStatus = async () => {
       setIsLoading(true);
       try {
-        const response = await fetch(TUNNEL_API_URL, {
+        // Build URL with subscriber_id as query parameter
+        const url = TUNNEL_API_URL.startsWith('http') 
+          ? new URL(TUNNEL_API_URL)
+          : new URL(TUNNEL_API_URL, window.location.origin);
+        url.searchParams.set('subscriber_id', SUBSCRIBER_ID);
+        
+        const response = await fetch(url.toString(), {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
@@ -24,7 +30,7 @@ export default function BPPAdmin() {
 
         if (response.ok) {
           const data = await response.json();
-          // Assuming the API returns the tunnel status
+          // API returns {"tunnel":true} or {"tunnel":false}
           setTunnelingEnabled(data.tunnel === true);
         } else {
           // If GET fails, assume tunneling is disabled
