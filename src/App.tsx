@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom';
 import './App.css';
 import Sidebar from './components/Sidebar';
 import DiscoverForm from './components/DiscoverForm';
@@ -34,7 +35,8 @@ const USE_LOCAL_DATA = import.meta.env.VITE_USE_LOCAL_DATA === 'true';
 type AppSection = 'bap' | 'bpp' | 'admin' | 'bpp-admin';
 
 function App() {
-  const [activeSection, setActiveSection] = useState<AppSection>('bap');
+  const navigate = useNavigate();
+  const location = useLocation();
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [currentCatalog, setCurrentCatalog] = useState<CatalogResponse | null>(null);
   const [currentRenderer, setCurrentRenderer] = useState<RendererConfig | null>(null);
@@ -43,6 +45,23 @@ function App() {
   const [error, setError] = useState<string | null>(null);
   const [useLocalCatalog, setUseLocalCatalog] = useState(USE_LOCAL_DATA);
   const [useLocalRenderer, setUseLocalRenderer] = useState(USE_LOCAL_DATA);
+
+  // Derive activeSection from current route
+  // Since basename is "/retail", location.pathname is relative to that
+  const getActiveSection = (): AppSection => {
+    const path = location.pathname;
+    if (path === '/bpp' || path.startsWith('/bpp/')) return 'bpp';
+    if (path === '/admin' || path.startsWith('/admin/')) return 'admin';
+    if (path === '/bpp-admin' || path.startsWith('/bpp-admin/')) return 'bpp-admin';
+    return 'bap'; // default (path === '/' or empty)
+  };
+
+  const activeSection = getActiveSection();
+
+  const setActiveSection = (section: AppSection) => {
+    const path = section === 'bap' ? '/' : `/${section}`;
+    navigate(path);
+  };
 
 
   const handleDiscover = async (catalogResponse: CatalogResponse | null, error: string | null) => {
@@ -222,21 +241,6 @@ function App() {
   };
 
 
-  const renderActiveSection = () => {
-    switch (activeSection) {
-      case 'bap':
-        return <BAPApp />;
-      case 'bpp':
-        return <BPPApp />;
-      case 'admin':
-        return <ONDCAdmin />;
-      case 'bpp-admin':
-        return <BPPAdmin />;
-      default:
-        return <BAPApp />;
-    }
-  };
-
   return (
     <div className={`app ${isSidebarCollapsed ? 'has-collapsed-sidebar' : ''}`}>
       <Sidebar 
@@ -256,7 +260,13 @@ function App() {
         </div>
       </header>
 
-      {renderActiveSection()}
+      <Routes>
+        <Route path="/" element={<BAPApp />} />
+        <Route path="/bpp" element={<BPPApp />} />
+        <Route path="/admin" element={<ONDCAdmin />} />
+        <Route path="/bpp-admin" element={<BPPAdmin />} />
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
     </div>
   );
 }

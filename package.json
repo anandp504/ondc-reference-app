@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "handlebars": "^4.7.8",
+    "react-router-dom": "^7.10.1",
     "uuid": "^9.0.1"
   },
   "devDependencies": {
@@ -18,9 +19,10 @@
     "@rollup/plugin-commonjs": "^29.0.0",
     "@rollup/plugin-node-resolve": "^16.0.3",
     "@types/node": "^24.10.1",
-    "@types/uuid": "^9.0.8",
     "@types/react": "^18.2.0",
     "@types/react-dom": "^18.2.0",
+    "@types/react-router-dom": "^5.3.3",
+    "@types/uuid": "^9.0.8",
     "@vitejs/plugin-react": "^4.0.0",
     "esbuild": "^0.27.0",
     "eslint": "^8.45.0",
