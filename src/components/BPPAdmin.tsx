@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import './BPPAdmin.css';
 
 const TUNNEL_API_URL = import.meta.env.VITE_TUNNEL_API_URL || '/api/tunnel/config';
-const SUBSCRIBER_ID = import.meta.env.VITE_SUBSCRIBER_ID || 'http://34.100.242.30:8081/bpp/receiver';
+const SUBSCRIBER_ID = import.meta.env.VITE_SUBSCRIBER_ID || 'http://34.47.175.48:8081/bpp/receiver';
 
 export default function BPPAdmin() {
   const [tunnelingEnabled, setTunnelingEnabled] = useState(false);

@@ -7,9 +7,10 @@ interface SidebarProps {
   activeSection: AppSection;
   onSectionChange: (section: AppSection) => void;
   onCollapseChange?: (isCollapsed: boolean) => void;
+  visibleSections?: AppSection[]; // Optional prop to filter visible sections
 }
 
-export default function Sidebar({ activeSection, onSectionChange, onCollapseChange }: SidebarProps) {
+export default function Sidebar({ activeSection, onSectionChange, onCollapseChange, visibleSections }: SidebarProps) {
   const [isCollapsed, setIsCollapsed] = useState(false);
 
   const handleToggle = () => {
@@ -18,12 +19,17 @@ export default function Sidebar({ activeSection, onSectionChange, onCollapseChan
     onCollapseChange?.(newState);
   };
 
-  const sections = [
+  const allSections = [
     { id: 'bap' as AppSection, label: 'BAP', description: 'Consumer App', icon: '🛒' },
     { id: 'bpp' as AppSection, label: 'BPP', description: 'Seller App', icon: '🏬' },
     { id: 'admin' as AppSection, label: 'Admin', description: 'ONDC Admin', icon: '⚙️' },
     { id: 'bpp-admin' as AppSection, label: 'BPP Admin', description: 'BPP Configuration', icon: '🔧' },
   ];
+
+  // Filter sections based on visibleSections prop, or show all if not provided
+  const sections = visibleSections 
+    ? allSections.filter(section => visibleSections.includes(section.id))
+    : allSections;
 
   return (
     <aside className={`sidebar ${isCollapsed ? 'sidebar-collapsed' : ''}`}>

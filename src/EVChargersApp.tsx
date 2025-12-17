@@ -166,6 +166,7 @@ function EVChargersApp() {
         activeSection={activeSection} 
         onSectionChange={setActiveSection}
         onCollapseChange={setIsSidebarCollapsed}
+        visibleSections={['bap']}
       />
       <header className="app-header">
         <div className="app-header-inner">

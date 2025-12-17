@@ -22,7 +22,7 @@ export default defineConfig({
                 secure: false,
               },
               '/api/tunnel': {
-                target: 'http://34.100.215.201:8084',
+                target: 'http://34.93.71.145:8084',
                 changeOrigin: true,
                 rewrite: (path) => path.replace(/^\/api\/tunnel/, '/tunnel'),
                 secure: false,
