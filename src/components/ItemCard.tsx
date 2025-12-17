@@ -23,7 +23,7 @@ export default function ItemCard({ item, catalog, rendererConfig, viewType = 'di
 
   useEffect(() => {
     if (containerRef.current && renderedHtml) {
-      // Apply styling hints if available
+      // Apply styling hints if available - Grocery dietary badges
       const dietaryClassification = item['beckn:itemAttributes']?.dietaryClassification;
       if (dietaryClassification && rendererConfig.stylingHints?.dietaryBadge) {
         const badgeStyle = rendererConfig.stylingHints.dietaryBadge[dietaryClassification];
@@ -32,6 +32,34 @@ export default function ItemCard({ item, catalog, rendererConfig, viewType = 'di
           badges.forEach((badge) => {
             (badge as HTMLElement).style.backgroundColor = badgeStyle.backgroundColor;
             (badge as HTMLElement).style.color = badgeStyle.color;
+          });
+        }
+      }
+
+      // Apply styling hints for EV Charging - Charging Speed badges
+      const chargingSpeed = item['beckn:itemAttributes']?.chargingSpeed;
+      if (chargingSpeed && rendererConfig.stylingHints?.chargingSpeedBadge) {
+        const badgeStyle = rendererConfig.stylingHints.chargingSpeedBadge[chargingSpeed];
+        if (badgeStyle) {
+          const badges = containerRef.current.querySelectorAll('.charging-speed-badge');
+          badges.forEach((badge) => {
+            (badge as HTMLElement).style.backgroundColor = badgeStyle.backgroundColor;
+            (badge as HTMLElement).style.color = badgeStyle.color;
+          });
+        }
+      }
+
+      // Apply styling hints for EV Charging - Station Status badges
+      const stationStatus = item['beckn:itemAttributes']?.stationStatus;
+      if (stationStatus && rendererConfig.stylingHints?.stationStatus) {
+        const badgeStyle = rendererConfig.stylingHints.stationStatus[stationStatus];
+        if (badgeStyle) {
+          const statusBadges = containerRef.current.querySelectorAll('.status-badge');
+          statusBadges.forEach((badge) => {
+            if (badge.classList.contains(`status-${stationStatus}`)) {
+              (badge as HTMLElement).style.backgroundColor = badgeStyle.backgroundColor;
+              (badge as HTMLElement).style.color = badgeStyle.color;
+            }
           });
         }
       }

@@ -47,9 +47,9 @@ function App() {
   const [useLocalRenderer, setUseLocalRenderer] = useState(USE_LOCAL_DATA);
 
   // Derive activeSection from current route
-  // Since basename is "/retail", location.pathname is relative to that
+  // Path is relative to /retail base
   const getActiveSection = (): AppSection => {
-    const path = location.pathname;
+    const path = location.pathname.replace('/retail', '');
     if (path === '/bpp' || path.startsWith('/bpp/')) return 'bpp';
     if (path === '/admin' || path.startsWith('/admin/')) return 'admin';
     if (path === '/bpp-admin' || path.startsWith('/bpp-admin/')) return 'bpp-admin';
@@ -59,7 +59,7 @@ function App() {
   const activeSection = getActiveSection();
 
   const setActiveSection = (section: AppSection) => {
-    const path = section === 'bap' ? '/' : `/${section}`;
+    const path = section === 'bap' ? '/retail/' : `/retail/${section}`;
     navigate(path);
   };
 
@@ -265,7 +265,7 @@ function App() {
         <Route path="/bpp" element={<BPPApp />} />
         <Route path="/admin" element={<ONDCAdmin />} />
         <Route path="/bpp-admin" element={<BPPAdmin />} />
-        <Route path="*" element={<Navigate to="/" replace />} />
+        <Route path="*" element={<Navigate to="/retail/" replace />} />
       </Routes>
     </div>
   );

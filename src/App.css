@@ -648,3 +648,450 @@
   font-weight: 600;
   color: #213547;
 }
+
+/* EV Charging Item Styles */
+.ev-charging-card {
+  width: 100%;
+}
+
+.ev-charging-main {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.ev-charging-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 0.5rem;
+}
+
+.ev-charging-name {
+  margin: 0;
+  font-size: 1.3em;
+  color: #334155;
+  flex: 1;
+  font-weight: 500;
+}
+
+.charging-speed-badge {
+  padding: 0.25rem 0.75rem;
+  border-radius: 4px;
+  font-size: 0.75em;
+  font-weight: 600;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.charging-speed-badge.speed-SLOW {
+  background-color: #9E9E9E;
+  color: #FFFFFF;
+}
+
+.charging-speed-badge.speed-NORMAL {
+  background-color: #4CAF50;
+  color: #FFFFFF;
+}
+
+.charging-speed-badge.speed-FAST {
+  background-color: #2196F3;
+  color: #FFFFFF;
+}
+
+.charging-speed-badge.speed-ULTRAFAST {
+  background-color: #FF9800;
+  color: #FFFFFF;
+}
+
+.ev-charging-short-desc {
+  color: #64748b;
+  margin: 0.1rem 0 0.2rem 0;
+  font-size: 0.9rem;
+}
+
+.ev-charging-location {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin-top: 0.15rem;
+  color: #64748b;
+  font-size: 0.85rem;
+}
+
+.location-icon {
+  font-size: 0.9rem;
+}
+
+.location-text {
+  flex: 1;
+}
+
+.ev-charging-spec-summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin-top: 0.5rem;
+  margin-bottom: 0.25rem;
+}
+
+.ev-charging-spec-summary .spec-chip {
+  font-size: 0.7rem;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  background-color: #f0f9ff;
+  color: #0369a1;
+  border: 1px solid #bae6fd;
+  font-weight: 500;
+}
+
+.ev-charging-amenities-summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin-top: 0.5rem;
+  margin-bottom: 0.25rem;
+}
+
+.amenity-chip {
+  font-size: 0.7rem;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  background-color: #f0fdf4;
+  color: #166534;
+  border: 1px solid #bbf7d0;
+  font-weight: 500;
+}
+
+.ev-charging-status-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+  margin-top: 0.5rem;
+}
+
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.25rem 0.65rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.status-badge.status-Available {
+  background-color: #4CAF50;
+  color: #FFFFFF;
+}
+
+.status-badge.status-Occupied {
+  background-color: #FF9800;
+  color: #FFFFFF;
+}
+
+.status-badge.status-OutOfService {
+  background-color: #F44336;
+  color: #FFFFFF;
+}
+
+.status-badge.status-Reserved {
+  background-color: #2196F3;
+  color: #FFFFFF;
+}
+
+.status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: currentColor;
+}
+
+.reservation-badge {
+  font-size: 0.7rem;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  background-color: #e0f2fe;
+  color: #0369a1;
+  border: 1px solid #bae6fd;
+  font-weight: 500;
+}
+
+.parking-type-badge {
+  font-size: 0.7rem;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  background-color: #f1f5f9;
+  color: #475569;
+  border: 1px solid rgba(226, 232, 240, 0.8);
+  font-weight: 500;
+}
+
+.ev-charging-rating {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9em;
+  margin-top: 0.5rem;
+}
+
+.ev-charging-price-row {
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid rgba(226, 232, 240, 0.6);
+}
+
+.ev-charging-price-row .price-chip {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.25rem;
+  font-size: 1.1em;
+  font-weight: 600;
+  color: #1e40af;
+}
+
+.ev-charging-price-row .price-currency {
+  font-size: 0.9em;
+}
+
+.ev-charging-price-row .price-value {
+  font-size: 1.2em;
+}
+
+.ev-charging-price-row .price-unit {
+  font-size: 0.85em;
+  color: #64748b;
+  font-weight: 400;
+}
+
+/* EV Charging Detail View Styles */
+.ev-charging-detail {
+  width: 100%;
+}
+
+.ev-charging-long-desc {
+  color: #64748b;
+  margin: 0.5rem 0 1.5rem 0;
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+.ev-charging-specifications {
+  margin-bottom: 2rem;
+}
+
+.ev-charging-specifications h2 {
+  color: #334155;
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid #f1f5f9;
+}
+
+.ev-charging-specifications .spec-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid rgba(226, 232, 240, 0.5);
+}
+
+.ev-charging-specifications .spec-label {
+  font-weight: 500;
+  color: #64748b;
+  font-size: 0.9rem;
+}
+
+.ev-charging-specifications .spec-value {
+  color: #334155;
+  font-weight: 500;
+  font-size: 0.9rem;
+  text-align: right;
+}
+
+.ev-charging-location-info {
+  margin-bottom: 2rem;
+}
+
+.ev-charging-location-info h2 {
+  color: #334155;
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid #f1f5f9;
+}
+
+.location-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.location-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid rgba(226, 232, 240, 0.5);
+}
+
+.location-label {
+  font-weight: 500;
+  color: #64748b;
+  font-size: 0.9rem;
+}
+
+.location-value {
+  color: #334155;
+  font-weight: 500;
+  font-size: 0.9rem;
+  text-align: right;
+}
+
+.ev-charging-amenities-info {
+  margin-bottom: 2rem;
+}
+
+.ev-charging-amenities-info h2 {
+  color: #334155;
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid #f1f5f9;
+}
+
+.amenities-table {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid rgba(226, 232, 240, 0.6);
+  border-radius: 0.5rem;
+  overflow: hidden;
+}
+
+.amenities-header {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.75rem 1rem;
+  background-color: #f8fafc;
+  border-bottom: 2px solid rgba(226, 232, 240, 0.8);
+  font-weight: 600;
+  color: #334155;
+  font-size: 0.9rem;
+}
+
+.amenity-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid rgba(226, 232, 240, 0.5);
+  background-color: #ffffff;
+  transition: background-color 0.2s ease;
+}
+
+.amenity-row:last-child {
+  border-bottom: none;
+}
+
+.amenity-row:hover {
+  background-color: #f8fafc;
+}
+
+.amenity-name {
+  color: #334155;
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+
+.amenity-value {
+  color: #4CAF50;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.ev-charging-pricing {
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 2px solid #f1f5f9;
+}
+
+.price-display {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.25rem;
+  font-size: 1.3em;
+  font-weight: 600;
+  color: #1e40af;
+}
+
+.price-display .price-currency {
+  font-size: 0.9em;
+}
+
+.price-display .price-value {
+  font-size: 1.2em;
+}
+
+.price-display .price-unit {
+  font-size: 0.75em;
+  color: #64748b;
+  font-weight: 400;
+  margin-left: 0.25rem;
+}
+
+/* EV Charging Compact Card Styles */
+.ev-charging-compact {
+  padding: 1rem;
+}
+
+.ev-charging-compact .compact-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.ev-charging-compact .compact-header h4 {
+  margin: 0;
+  font-size: 1em;
+  color: #334155;
+}
+
+.ev-charging-compact .compact-location {
+  font-size: 0.85em;
+  color: #64748b;
+  margin-bottom: 0.5rem;
+}
+
+.ev-charging-compact .compact-specs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin-bottom: 0.5rem;
+}
+
+.ev-charging-compact .compact-spec {
+  font-size: 0.7rem;
+  padding: 0.15rem 0.4rem;
+  border-radius: 4px;
+  background-color: #f1f5f9;
+  color: #475569;
+  border: 1px solid rgba(226, 232, 240, 0.8);
+}
+
+.ev-charging-compact .compact-status {
+  font-size: 0.75rem;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  display: inline-block;
+}
+
+.ev-charging-compact .compact-price {
+  font-weight: 600;
+  color: #1e40af;
+  font-size: 0.95em;
+}
