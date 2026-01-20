@@ -10,7 +10,13 @@
     "preview": "npx vite preview"
   },
   "dependencies": {
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.1",
+    "@mui/icons-material": "^7.3.7",
+    "@mui/material": "^7.3.7",
+    "ajv": "^8.17.1",
     "handlebars": "^4.7.8",
+    "react-helmet-async": "^2.0.5",
     "react-router-dom": "^7.10.1",
     "uuid": "^9.0.1"
   },

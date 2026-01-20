@@ -1,0 +1,243 @@
+[
+    {
+        "$schema": "./config.schema.json",
+        "endpoint": "/retail",
+        "app": {
+            "title": "Discovery Service",
+            "logo": "/assets/logo.png",
+            "favicon": "/vite.svg"
+        },
+        "theme": {
+            "mode": "light",
+            "fontFamily": "Inter, sans-serif",
+            "primaryColor": "#a78bfa",
+            "backgroundColor": "#faf5ff"
+        },
+        "layout": {
+            "header": {
+                "title": "Reference Network Participant",
+                "subtitle": "Search and Discover Items",
+                "logo": "/assets/logo.png",
+                "background": "linear-gradient(to right, #e9d5ff, #ddd6fe)",
+                "color": "#1e293b"
+            },
+            "sidebar": {
+                "background": "#f9fafb",
+                "color": "#334155",
+                "activeColor": "#a5b4fc",
+                "sectionTitle": "Retail / Grocery",
+                "items": [
+                    {
+                        "id": "bap",
+                        "title": "Shopper App (BAP)",
+                        "description": "Search & Buy",
+                        "icon": "ShoppingBag",
+                        "routes": [
+                            "discovery"
+                        ]
+                    },
+                    {
+                        "id": "bpp",
+                        "title": "Seller App (BPP)",
+                        "description": "Manage Inventory",
+                        "icon": "Storefront",
+                        "routes": [
+                            "catalog-publish"
+                        ]
+                    }
+                ]
+            }
+        },
+        "network": {
+            "domain": "beckn.one:retail"
+        },
+        "schemas": {
+            "GroceryItem": {
+                "label": "Grocery",
+                "contextUrl": "https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/draft/schema/GroceryItem/v1/context.jsonld#GroceryItem",
+                "rendererUrl": "https://raw.githubusercontent.com/beckn/protocol-specifications-new/ondc-schema/schema/GroceryItem/v1/renderer.json"
+            },
+            "FoodAndBeverageItem": {
+                "label": "Food & Beverage",
+                "contextUrl": "https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/draft/schema/FoodAndBeverageItem/v1/context.jsonld#FoodAndBeverageItem",
+                "rendererUrl": "https://raw.githubusercontent.com/beckn/protocol-specifications-new/ondc-schema/schema/FoodAndBeverageItem/v1/renderer.json"
+            }
+        },
+        "views": {
+            "discovery": {
+                "type": "search",
+                "title": "Discover Items",
+                "subtitle": "Search across the ONDC networks",
+                "api": "/beckn/discover",
+                "context": {
+                    "action": "discover"
+                },
+                "ui": {
+                    "layout": "grid",
+                    "background": "linear-gradient(135deg, #faf5ff, #f3e8ff)"
+                },
+                "search": {
+                    "placeholder": "Enter search term...",
+                    "radius": 1000
+                },
+                "filters": [
+                    {
+                        "id": "category",
+                        "label": "Category",
+                        "type": "select",
+                        "uiType": "chips",
+                        "options": [
+                            {
+                                "label": "Grocery",
+                                "value": "grocery",
+                                "schema": "GroceryItem",
+                                "defaultSearch": {
+                                    "text": "organic rice basmati",
+                                    "location": "19.1529,72.935"
+                                }
+                            },
+                            {
+                                "label": "Food & Beverage",
+                                "value": "fnb",
+                                "schema": "FoodAndBeverageItem",
+                                "defaultSearch": {
+                                    "text": "veg pizza margherita",
+                                    "location": "28.5375,77.2408"
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "id": "jsonpath",
+                        "label": "JSONPath Query",
+                        "type": "text",
+                        "options": []
+                    }
+                ]
+            },
+            "catalog-publish": {
+                "type": "form",
+                "title": "Publish Catalog",
+                "subtitle": "Empower your business distribution. Upload your detailed product catalog to instantly reach buyers across the ONDC network.",
+                "api": "/beckn/v2/catalog/publish",
+                "context": {
+                    "action": "catalog_publish",
+                    "ttl": "PT30S"
+                }
+            }
+        }
+    },
+    {
+        "endpoint": "/evcharging",
+        "app": {
+            "title": "EV Power Network",
+            "logo": "/assets/ev-logo.png",
+            "favicon": "/ev-vite.svg"
+        },
+        "theme": {
+            "mode": "light",
+            "fontFamily": "Inter, sans-serif",
+            "primaryColor": "#a78bfa",
+            "backgroundColor": "#faf5ff"
+        },
+        "layout": {
+            "header": {
+                "title": "EV Power Network",
+                "subtitle": "Find Charging Stations Near You",
+                "logo": "/assets/ev-logo.png",
+                "background": "linear-gradient(to right, #166534, #15803d)",
+                "color": "#ffffff"
+            },
+            "sidebar": {
+                "background": "#f9fafb",
+                "color": "#14532d",
+                "activeColor": "#a5b4fc",
+                "sectionTitle": "EV Charging",
+                "items": [
+                    {
+                        "id": "bap",
+                        "title": "Find Charger",
+                        "description": "Nearest Points",
+                        "icon": "BatteryChargingFull",
+                        "routes": [
+                            "discovery"
+                        ]
+                    },
+                    {
+                        "id": "bpp",
+                        "title": "Station Admin",
+                        "description": "Manage Network",
+                        "icon": "Settings",
+                        "routes": [
+                            "catalog-publish"
+                        ]
+                    }
+                ]
+            }
+        },
+        "network": {
+            "domain": "beckn.one:ev-charging"
+        },
+        "schemas": {
+            "EVChargingStation": {
+                "label": "Charging Station",
+                "contextUrl": "https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/draft/schema/EVChargingStation/v1/context.jsonld",
+                "rendererUrl": "https://raw.githubusercontent.com/beckn/protocol-specifications-new/ondc-schema/schema/EVChargingStation/v1/renderer.json"
+            }
+        },
+        "views": {
+            "discovery": {
+                "type": "search",
+                "title": "Find Charging Stations",
+                "subtitle": "Locate available chargers nearby",
+                "api": "/beckn/discover",
+                "context": {
+                    "action": "discover"
+                },
+                "ui": {
+                    "layout": "list",
+                    "background": "linear-gradient(135deg, #faf5ff, #f3e8ff)"
+                },
+                "search": {
+                    "placeholder": "Search by location or station name...",
+                    "radius": 5000
+                },
+                "filters": [
+                    {
+                        "id": "connector",
+                        "label": "Connector Type",
+                        "type": "select",
+                        "uiType": "dropdown",
+                        "options": [
+                            {
+                                "label": "CCS2 Fast Charger",
+                                "value": "ccs2",
+                                "schema": "EVChargingStation",
+                                "defaultSearch": {
+                                    "text": "CCS2 Fast Charger",
+                                    "location": "12.9716,77.5946"
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "id": "jsonpath",
+                        "label": "JSONPath Query",
+                        "type": "text",
+                        "options": []
+                    }
+                ]
+            },
+            "catalog-publish": {
+                "type": "form",
+                "title": "Publish Station",
+                "subtitle": "Seamlessly onboard your charging infrastructure. Upload station details to make them visible to EV drivers network-wide.",
+                "api": "/beckn/v2/catalog/publish",
+                "context": {
+                    "action": "catalog_publish",
+                    "ttl": "PT30S"
+                }
+            }
+        }
+    }
+]
