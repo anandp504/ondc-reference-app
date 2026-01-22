@@ -16,7 +16,7 @@ export default defineConfig({
           secure: false, // Allow self-signed certificates
         },
               '/api/credentials': {
-                target: 'http://34.100.210.253:6000',
+                target: 'http://35.244.45.209:6000',
                 changeOrigin: true,
                 rewrite: (path) => path.replace(/^\/api\/credentials/, '/api/credentials'),
                 secure: false,
