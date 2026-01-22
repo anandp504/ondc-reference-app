@@ -1,20 +1,19 @@
-import { useState, useRef, ChangeEvent, DragEvent } from 'react';
+import { useState, useRef } from 'react';
+import type { ChangeEvent, DragEvent } from 'react';
 import { generateUUID } from '../utils/uuid';
 import './CatalogPublish.css';
 
 const CATALOG_PUBLISH_API_URL = 'https://34.93.141.21.sslip.io/beckn/catalog/publish';
 
-// Default values as per the curl command sample
-const DEFAULT_BPP_ID = 'driver-provider-demo.app';
-const DEFAULT_BPP_URI = 'https://provider.demo.app/callbacks';
+// Hardcoded values
+const BPP_ID = 'provider-demo.app';
+const BPP_URI = 'https://provider.demo.app/callbacks';
 
 interface CatalogPublishProps { }
 
 export default function CatalogPublish({ }: CatalogPublishProps) {
   const [file, setFile] = useState<File | null>(null);
   const [jsonContent, setJsonContent] = useState<any[] | null>(null);
-  const [bppId, setBppId] = useState(DEFAULT_BPP_ID);
-  const [bppUri, setBppUri] = useState(DEFAULT_BPP_URI);
 
   const [isDragging, setIsDragging] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
@@ -120,8 +119,8 @@ export default function CatalogPublish({ }: CatalogPublishProps) {
           message_id: messageId,
           transaction_id: transactionId,
           ttl: "PT30S",
-          bpp_id: bppId,
-          bpp_uri: bppUri
+          bpp_id: BPP_ID,
+          bpp_uri: BPP_URI
         },
         message: {
           catalogs: jsonContent
@@ -173,28 +172,7 @@ export default function CatalogPublish({ }: CatalogPublishProps) {
         </p>
       </div>
 
-      <div className="catalog-form-section">
-        <div className="catalog-form-group">
-          <label htmlFor="bpp_id">BPP ID</label>
-          <input
-            type="text"
-            id="bpp_id"
-            value={bppId}
-            onChange={(e) => setBppId(e.target.value)}
-            placeholder="e.g., driver-provider-demo.app"
-          />
-        </div>
-        <div className="catalog-form-group">
-          <label htmlFor="bpp_uri">BPP URI</label>
-          <input
-            type="text"
-            id="bpp_uri"
-            value={bppUri}
-            onChange={(e) => setBppUri(e.target.value)}
-            placeholder="e.g., https://provider.demo.app/callbacks"
-          />
-        </div>
-      </div>
+      {/* Inputs removed as per request - using hardcoded BPP ID/URI */}
 
       {/* File Upload Area */}
       <div className="csv-upload-section">
