@@ -130,9 +130,9 @@ export default function ONDCAdmin() {
         message_id: generateUUID(),
         timestamp: new Date().toISOString(),
         ttl: 'PT30S',
-          schema_context: category === 'grocery'
-          ? ['https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/draft/schema/GroceryItem/v1/context.jsonld#GroceryItem']
-          : ['https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/draft/schema/FoodAndBeverageItem/v1/context.jsonld#FoodAndBeverageItem']
+        schema_context: category === 'grocery'
+          ? ['https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/main/schema/GroceryItem/v1/context.jsonld#GroceryItem']
+          : ['https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/main/schema/FoodAndBeverageItem/v1/context.jsonld#FoodAndBeverageItem']
       },
       message: {
         filters: {
@@ -145,7 +145,7 @@ export default function ONDCAdmin() {
     try {
       console.log('Fetching items for provider:', providerId);
       console.log('API request:', JSON.stringify(request, null, 2));
-      
+
       const response = await fetch(DISCOVER_API_URL, {
         method: 'POST',
         headers: {
@@ -166,7 +166,7 @@ export default function ONDCAdmin() {
       catalogResponse.message.catalogs.forEach((catalog, idx) => {
         console.log(`Catalog ${idx} items count:`, catalog['beckn:items']?.length || 0);
       });
-      
+
       setCatalogResponse(catalogResponse);
     } catch (error: any) {
       console.error('Error fetching items:', error);
@@ -208,7 +208,7 @@ export default function ONDCAdmin() {
         }
       });
     });
-    
+
     if (selectedItems.size === allItemIds.size && allItemIds.size > 0) {
       setSelectedItems(new Set());
     } else {
@@ -220,7 +220,7 @@ export default function ONDCAdmin() {
     // Extract credential type from credential.type array
     const credentialTypeArray = response.credential.type;
     let credentialType: 'ONDCFiveStarSeller' | 'ONDCFastMovingProduct';
-    
+
     if (credentialTypeArray.includes('ONDCFiveStarSeller')) {
       credentialType = 'ONDCFiveStarSeller';
     } else if (credentialTypeArray.includes('ONDCFastMovingProduct')) {
@@ -251,8 +251,8 @@ export default function ONDCAdmin() {
       const provider = PROVIDERS.find(p => p['beckn:id'] === providerId);
       const category = provider?.['beckn:id'] === 'fresh-grocery-store' ? 'grocery' : 'pizza';
       const schemaContext = category === 'grocery'
-        ? 'https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/draft/schema/GroceryItem/v1/context.jsonld'
-        : 'https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/draft/schema/FoodAndBeverageItem/v1/context.jsonld';
+        ? 'https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/main/schema/GroceryItem/v1/context.jsonld'
+        : 'https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/main/schema/FoodAndBeverageItem/v1/context.jsonld';
       const itemType = category === 'grocery' ? 'GroceryItem' : 'FoodAndBeverageItem';
 
       // Build catalog items
@@ -261,12 +261,12 @@ export default function ONDCAdmin() {
       if (credentialType === 'provider') {
         // Update all items for the provider
         if (!catalogData || !providerId) return;
-        
+
         catalogData.message.catalogs.forEach((catalog: any) => {
           catalog['beckn:items']?.forEach((item: any) => {
             if (item['beckn:provider']?.['beckn:id'] === providerId) {
               items.push({
-                '@context': 'https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/draft/schema/core/v2/context.jsonld',
+                '@context': 'https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/main/schema/core/v2/context.jsonld',
                 '@type': 'beckn:Item',
                 'beckn:id': item['beckn:id'],
                 'beckn:descriptor': item['beckn:descriptor'] || {
@@ -279,7 +279,7 @@ export default function ONDCAdmin() {
                     'schema:name': provider?.['beckn:descriptor']['schema:name'] || ''
                   }
                 },
-                  'beckn:itemAttributes': {
+                'beckn:itemAttributes': {
                   ...(item['beckn:itemAttributes'] || {}),
                   '@context': schemaContext,
                   '@type': itemType,
@@ -299,12 +299,12 @@ export default function ONDCAdmin() {
       } else {
         // Update specific items
         if (!catalogData || !itemIds || itemIds.length === 0) return;
-        
+
         catalogData.message.catalogs.forEach((catalog: any) => {
           catalog['beckn:items']?.forEach((item: any) => {
             if (itemIds.includes(item['beckn:id'])) {
               items.push({
-                '@context': 'https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/draft/schema/core/v2/context.jsonld',
+                '@context': 'https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/main/schema/core/v2/context.jsonld',
                 '@type': 'beckn:Item',
                 'beckn:id': item['beckn:id'],
                 'beckn:descriptor': item['beckn:descriptor'] || {
@@ -359,7 +359,7 @@ export default function ONDCAdmin() {
         message: {
           catalogs: [
             {
-              '@context': 'https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/draft/schema/core/v2/context.jsonld',
+              '@context': 'https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/main/schema/core/v2/context.jsonld',
               '@type': 'beckn:Catalog',
               'beckn:id': catalogId,
               'beckn:bppId': 'sandbox-retail-np1.com',
@@ -432,7 +432,7 @@ export default function ONDCAdmin() {
 
       const result = (await response.json()) as CredentialResponse;
       const parsedCredential = parseCredentialResponse(result);
-      
+
       // Store the issued credential
       setIssuedCredentials(prev => [...prev, parsedCredential]);
       setSuccessMessage(`Successfully issued credentials for ${providerName}`);
@@ -454,8 +454,8 @@ export default function ONDCAdmin() {
             timestamp: new Date().toISOString(),
             ttl: 'PT30S',
             schema_context: category === 'grocery'
-              ? ['https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/draft/schema/GroceryItem/v1/context.jsonld#GroceryItem']
-              : ['https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/draft/schema/FoodAndBeverageItem/v1/context.jsonld#FoodAndBeverageItem']
+              ? ['https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/main/schema/GroceryItem/v1/context.jsonld#GroceryItem']
+              : ['https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/main/schema/FoodAndBeverageItem/v1/context.jsonld#FoodAndBeverageItem']
           },
           message: {
             filters: {
@@ -464,13 +464,13 @@ export default function ONDCAdmin() {
             }
           }
         };
-        
+
         const catalogFetchResponse = await fetch(DISCOVER_API_URL, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(tempRequest),
         });
-        
+
         if (catalogFetchResponse.ok) {
           const catalogData = (await catalogFetchResponse.json()) as CatalogResponse;
           console.log('Fetched catalog data for provider update:', catalogData);
@@ -503,13 +503,13 @@ export default function ONDCAdmin() {
       const itemIdOrder: string[] = [];
       const provider = PROVIDERS.find(p => p['beckn:id'] === selectedProvider);
       const brandName = provider?.['beckn:descriptor']['schema:name'] || '';
-      
+
       catalogResponse.message.catalogs.forEach(catalog => {
         catalog['beckn:items']?.forEach(item => {
           if (selectedItems.has(item['beckn:id'])) {
             // Determine category based on provider
             const category = provider?.['beckn:id'] === 'fresh-grocery-store' ? 'Grocery' : 'Food & Beverage';
-            
+
             itemsToIssue.push({
               type: 'product',
               productName: item['beckn:descriptor']['schema:name'],
@@ -524,7 +524,7 @@ export default function ONDCAdmin() {
       });
 
       // Issue credentials for all selected items
-      const promises = itemsToIssue.map(item => 
+      const promises = itemsToIssue.map(item =>
         fetch(CREDENTIALS_API_URL, {
           method: 'POST',
           headers: {
@@ -574,7 +574,7 @@ export default function ONDCAdmin() {
           }
         }
       }
-      
+
       setSelectedItems(new Set());
     } catch (error: any) {
       console.error('Error issuing product credentials:', error);
@@ -588,7 +588,7 @@ export default function ONDCAdmin() {
     try {
       const rendererUrl = category === 'grocery' ? GROCERY_RENDERER_URL : PIZZA_RENDERER_URL;
       const rendererRes = await fetch(rendererUrl);
-      
+
       if (!rendererRes.ok) {
         throw new Error('Failed to load renderer from GitHub');
       }
@@ -707,11 +707,11 @@ export default function ONDCAdmin() {
                           title="View PDF"
                         >
                           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M14 2H6C5.46957 2 4.96086 2.21071 4.58579 2.58579C4.21071 2.96086 4 3.46957 4 4V20C4 20.5304 4.21071 21.0391 4.58579 21.4142C4.96086 21.7893 5.46957 22 6 22H18C18.5304 22 19.0391 21.7893 19.4142 21.4142C19.7893 21.0391 20 20.5304 20 20V8L14 2Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                            <path d="M14 2V8H20" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                            <path d="M16 13H8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                            <path d="M16 17H8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                            <path d="M10 9H9H8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                            <path d="M14 2H6C5.46957 2 4.96086 2.21071 4.58579 2.58579C4.21071 2.96086 4 3.46957 4 4V20C4 20.5304 4.21071 21.0391 4.58579 21.4142C4.96086 21.7893 5.46957 22 6 22H18C18.5304 22 19.0391 21.7893 19.4142 21.4142C19.7893 21.0391 20 20.5304 20 20V8L14 2Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                            <path d="M14 2V8H20" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                            <path d="M16 13H8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                            <path d="M16 17H8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                            <path d="M10 9H9H8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                           </svg>
                         </a>
                       </div>
@@ -756,7 +756,7 @@ export default function ONDCAdmin() {
                       </span>
                     </div>
                   </div>
-                  <button 
+                  <button
                     className="issue-credential-btn"
                     onClick={(e) => {
                       e.stopPropagation();
@@ -835,7 +835,7 @@ export default function ONDCAdmin() {
                 </div>
 
                 {isLoading && <LoadingSpinner message="Loading items..." />}
-                
+
                 {error && (
                   <div className="error-message">
                     {error}
@@ -883,11 +883,11 @@ export default function ONDCAdmin() {
                               title="View PDF"
                             >
                               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M14 2H6C5.46957 2 4.96086 2.21071 4.58579 2.58579C4.21071 2.96086 4 3.46957 4 4V20C4 20.5304 4.21071 21.0391 4.58579 21.4142C4.96086 21.7893 5.46957 22 6 22H18C18.5304 22 19.0391 21.7893 19.4142 21.4142C19.7893 21.0391 20 20.5304 20 20V8L14 2Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                                <path d="M14 2V8H20" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                                <path d="M16 13H8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                                <path d="M16 17H8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                                <path d="M10 9H9H8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                                <path d="M14 2H6C5.46957 2 4.96086 2.21071 4.58579 2.58579C4.21071 2.96086 4 3.46957 4 4V20C4 20.5304 4.21071 21.0391 4.58579 21.4142C4.96086 21.7893 5.46957 22 6 22H18C18.5304 22 19.0391 21.7893 19.4142 21.4142C19.7893 21.0391 20 20.5304 20 20V8L14 2Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                                <path d="M14 2V8H20" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                                <path d="M16 13H8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                                <path d="M16 17H8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                                <path d="M10 9H9H8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                               </svg>
                             </a>
                           </div>
@@ -916,7 +916,7 @@ export default function ONDCAdmin() {
                         )}
                       </div>
                     </div>
-                    
+
                     <div className="results-content">
                       {catalogResponse.message.catalogs.map((catalog) => (
                         <div key={catalog['beckn:id']} className="catalog-view">
@@ -931,7 +931,7 @@ export default function ONDCAdmin() {
                               const itemAttributes = item['beckn:itemAttributes'] as any;
                               const hasItemCredential = itemAttributes?.credentials?.item?.url;
                               const isDisabled = !!hasItemCredential;
-                              
+
                               return (
                                 <div key={item['beckn:id']} className="selectable-item-wrapper">
                                   <label className={`item-checkbox-label ${isDisabled ? 'disabled' : ''}`}>
@@ -961,7 +961,7 @@ export default function ONDCAdmin() {
                         </div>
                       ))}
                     </div>
-                    
+
                     {selectedItems.size > 0 && (
                       <div className="issue-credentials-footer">
                         <div className="selected-summary">

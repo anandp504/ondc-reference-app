@@ -13,7 +13,7 @@
   "message": {
     "catalogs": [
       {
-        "@context": "https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/draft/schema/core/v2/context.jsonld",
+        "@context": "https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/main/schema/core/v2/context.jsonld",
         "@type": "beckn:Catalog",
         "beckn:id": "catalog-ev-charging-multi-city",
         "beckn:descriptor": {
@@ -25,7 +25,7 @@
         "beckn:bppUri": "https://bpp.example.com",
         "beckn:items": [
           {
-            "@context": "https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/draft/schema/core/v2/context.jsonld",
+            "@context": "https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/main/schema/core/v2/context.jsonld",
             "@type": "beckn:Item",
             "beckn:id": "ev-charger-ccs2-blr-001",
             "beckn:descriptor": {
@@ -80,7 +80,7 @@
               }
             },
             "beckn:itemAttributes": {
-              "@context": "https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/draft/schema/EvChargingService/v1/context.jsonld",
+              "@context": "https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/main/schema/EvChargingService/v1/context.jsonld",
               "@type": "ChargingService",
               "connectorType": "CCS2",
               "maxPowerKW": 60,
@@ -121,7 +121,7 @@
             }
           },
           {
-            "@context": "https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/draft/schema/core/v2/context.jsonld",
+            "@context": "https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/main/schema/core/v2/context.jsonld",
             "@type": "beckn:Item",
             "beckn:id": "ev-charger-ccs2-blr-002",
             "beckn:descriptor": {
@@ -176,7 +176,7 @@
               }
             },
             "beckn:itemAttributes": {
-              "@context": "https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/draft/schema/EvChargingService/v1/context.jsonld",
+              "@context": "https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/main/schema/EvChargingService/v1/context.jsonld",
               "@type": "ChargingService",
               "connectorType": "CCS2",
               "maxPowerKW": 120,
@@ -218,7 +218,7 @@
             }
           },
           {
-            "@context": "https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/draft/schema/core/v2/context.jsonld",
+            "@context": "https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/main/schema/core/v2/context.jsonld",
             "@type": "beckn:Item",
             "beckn:id": "ev-charger-type2-blr-001",
             "beckn:descriptor": {
@@ -273,7 +273,7 @@
               }
             },
             "beckn:itemAttributes": {
-              "@context": "https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/draft/schema/EvChargingService/v1/context.jsonld",
+              "@context": "https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/main/schema/EvChargingService/v1/context.jsonld",
               "@type": "ChargingService",
               "connectorType": "Type2",
               "maxPowerKW": 22,
@@ -314,7 +314,7 @@
             }
           },
           {
-            "@context": "https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/draft/schema/core/v2/context.jsonld",
+            "@context": "https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/main/schema/core/v2/context.jsonld",
             "@type": "beckn:Item",
             "beckn:id": "ev-charger-chademo-blr-001",
             "beckn:descriptor": {
@@ -369,7 +369,7 @@
               }
             },
             "beckn:itemAttributes": {
-              "@context": "https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/draft/schema/EvChargingService/v1/context.jsonld",
+              "@context": "https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/main/schema/EvChargingService/v1/context.jsonld",
               "@type": "ChargingService",
               "connectorType": "CHAdeMO",
               "maxPowerKW": 50,
@@ -409,7 +409,7 @@
             }
           },
           {
-            "@context": "https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/draft/schema/core/v2/context.jsonld",
+            "@context": "https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/main/schema/core/v2/context.jsonld",
             "@type": "beckn:Item",
             "beckn:id": "ev-charger-ccs2-che-001",
             "beckn:descriptor": {
@@ -464,7 +464,7 @@
               }
             },
             "beckn:itemAttributes": {
-              "@context": "https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/draft/schema/EvChargingService/v1/context.jsonld",
+              "@context": "https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/main/schema/EvChargingService/v1/context.jsonld",
               "@type": "ChargingService",
               "connectorType": "CCS2",
               "maxPowerKW": 60,
@@ -505,7 +505,7 @@
             }
           },
           {
-            "@context": "https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/draft/schema/core/v2/context.jsonld",
+            "@context": "https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/main/schema/core/v2/context.jsonld",
             "@type": "beckn:Item",
             "beckn:id": "ev-charger-ccs2-che-002",
             "beckn:descriptor": {
@@ -560,7 +560,7 @@
               }
             },
             "beckn:itemAttributes": {
-              "@context": "https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/draft/schema/EvChargingService/v1/context.jsonld",
+              "@context": "https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/main/schema/EvChargingService/v1/context.jsonld",
               "@type": "ChargingService",
               "connectorType": "CCS2",
               "maxPowerKW": 120,
@@ -602,7 +602,7 @@
             }
           },
           {
-            "@context": "https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/draft/schema/core/v2/context.jsonld",
+            "@context": "https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/main/schema/core/v2/context.jsonld",
             "@type": "beckn:Item",
             "beckn:id": "ev-charger-type2-che-001",
             "beckn:descriptor": {
@@ -657,7 +657,7 @@
               }
             },
             "beckn:itemAttributes": {
-              "@context": "https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/draft/schema/EvChargingService/v1/context.jsonld",
+              "@context": "https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/main/schema/EvChargingService/v1/context.jsonld",
               "@type": "ChargingService",
               "connectorType": "Type2",
               "maxPowerKW": 22,
@@ -698,7 +698,7 @@
             }
           },
           {
-            "@context": "https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/draft/schema/core/v2/context.jsonld",
+            "@context": "https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/main/schema/core/v2/context.jsonld",
             "@type": "beckn:Item",
             "beckn:id": "ev-charger-gbt-che-001",
             "beckn:descriptor": {
@@ -753,7 +753,7 @@
               }
             },
             "beckn:itemAttributes": {
-              "@context": "https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/draft/schema/EvChargingService/v1/context.jsonld",
+              "@context": "https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/main/schema/EvChargingService/v1/context.jsonld",
               "@type": "ChargingService",
               "connectorType": "GB/T",
               "maxPowerKW": 75,
@@ -793,7 +793,7 @@
             }
           },
           {
-            "@context": "https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/draft/schema/core/v2/context.jsonld",
+            "@context": "https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/main/schema/core/v2/context.jsonld",
             "@type": "beckn:Item",
             "beckn:id": "ev-charger-ccs2-mum-001",
             "beckn:descriptor": {
@@ -848,7 +848,7 @@
               }
             },
             "beckn:itemAttributes": {
-              "@context": "https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/draft/schema/EvChargingService/v1/context.jsonld",
+              "@context": "https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/main/schema/EvChargingService/v1/context.jsonld",
               "@type": "ChargingService",
               "connectorType": "CCS2",
               "maxPowerKW": 60,
@@ -889,7 +889,7 @@
             }
           },
           {
-            "@context": "https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/draft/schema/core/v2/context.jsonld",
+            "@context": "https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/main/schema/core/v2/context.jsonld",
             "@type": "beckn:Item",
             "beckn:id": "ev-charger-ccs2-mum-002",
             "beckn:descriptor": {
@@ -944,7 +944,7 @@
               }
             },
             "beckn:itemAttributes": {
-              "@context": "https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/draft/schema/EvChargingService/v1/context.jsonld",
+              "@context": "https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/main/schema/EvChargingService/v1/context.jsonld",
               "@type": "ChargingService",
               "connectorType": "CCS2",
               "maxPowerKW": 120,
@@ -986,7 +986,7 @@
             }
           },
           {
-            "@context": "https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/draft/schema/core/v2/context.jsonld",
+            "@context": "https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/main/schema/core/v2/context.jsonld",
             "@type": "beckn:Item",
             "beckn:id": "ev-charger-type2-mum-001",
             "beckn:descriptor": {
@@ -1041,7 +1041,7 @@
               }
             },
             "beckn:itemAttributes": {
-              "@context": "https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/draft/schema/EvChargingService/v1/context.jsonld",
+              "@context": "https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/main/schema/EvChargingService/v1/context.jsonld",
               "@type": "ChargingService",
               "connectorType": "Type2",
               "maxPowerKW": 22,
@@ -1082,7 +1082,7 @@
             }
           },
           {
-            "@context": "https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/draft/schema/core/v2/context.jsonld",
+            "@context": "https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/main/schema/core/v2/context.jsonld",
             "@type": "beckn:Item",
             "beckn:id": "ev-charger-chademo-mum-001",
             "beckn:descriptor": {
@@ -1137,7 +1137,7 @@
               }
             },
             "beckn:itemAttributes": {
-              "@context": "https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/draft/schema/EvChargingService/v1/context.jsonld",
+              "@context": "https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/main/schema/EvChargingService/v1/context.jsonld",
               "@type": "ChargingService",
               "connectorType": "CHAdeMO",
               "maxPowerKW": 50,
@@ -1177,7 +1177,7 @@
             }
           },
           {
-            "@context": "https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/draft/schema/core/v2/context.jsonld",
+            "@context": "https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/main/schema/core/v2/context.jsonld",
             "@type": "beckn:Item",
             "beckn:id": "ev-charger-ccs2-del-001",
             "beckn:descriptor": {
@@ -1232,7 +1232,7 @@
               }
             },
             "beckn:itemAttributes": {
-              "@context": "https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/draft/schema/EvChargingService/v1/context.jsonld",
+              "@context": "https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/main/schema/EvChargingService/v1/context.jsonld",
               "@type": "ChargingService",
               "connectorType": "CCS2",
               "maxPowerKW": 60,
@@ -1273,7 +1273,7 @@
             }
           },
           {
-            "@context": "https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/draft/schema/core/v2/context.jsonld",
+            "@context": "https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/main/schema/core/v2/context.jsonld",
             "@type": "beckn:Item",
             "beckn:id": "ev-charger-ccs2-del-002",
             "beckn:descriptor": {
@@ -1328,7 +1328,7 @@
               }
             },
             "beckn:itemAttributes": {
-              "@context": "https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/draft/schema/EvChargingService/v1/context.jsonld",
+              "@context": "https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/main/schema/EvChargingService/v1/context.jsonld",
               "@type": "ChargingService",
               "connectorType": "CCS2",
               "maxPowerKW": 120,
@@ -1370,7 +1370,7 @@
             }
           },
           {
-            "@context": "https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/draft/schema/core/v2/context.jsonld",
+            "@context": "https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/main/schema/core/v2/context.jsonld",
             "@type": "beckn:Item",
             "beckn:id": "ev-charger-type2-del-001",
             "beckn:descriptor": {
@@ -1425,7 +1425,7 @@
               }
             },
             "beckn:itemAttributes": {
-              "@context": "https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/draft/schema/EvChargingService/v1/context.jsonld",
+              "@context": "https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/main/schema/EvChargingService/v1/context.jsonld",
               "@type": "ChargingService",
               "connectorType": "Type2",
               "maxPowerKW": 22,
@@ -1468,7 +1468,7 @@
         ],
         "beckn:offers": [
           {
-            "@context": "https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/draft/schema/core/v2/context.jsonld",
+            "@context": "https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/main/schema/core/v2/context.jsonld",
             "@type": "beckn:Offer",
             "beckn:id": "offer-ccs2-60kw-blr-001",
             "beckn:descriptor": {
@@ -1498,7 +1498,7 @@
               "WALLET"
             ],
             "beckn:offerAttributes": {
-              "@context": "https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/draft/schema/EvChargingOffer/v1/context.jsonld",
+              "@context": "https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/main/schema/EvChargingOffer/v1/context.jsonld",
               "@type": "ChargingOffer",
               "buyerFinderFee": {
                 "feeType": "PERCENTAGE",
@@ -1509,7 +1509,7 @@
             "beckn:provider": "ecopower-charging"
           },
           {
-            "@context": "https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/draft/schema/core/v2/context.jsonld",
+            "@context": "https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/main/schema/core/v2/context.jsonld",
             "@type": "beckn:Offer",
             "beckn:id": "offer-ccs2-120kw-blr-002",
             "beckn:descriptor": {
@@ -1540,7 +1540,7 @@
               "BANK_TRANSFER"
             ],
             "beckn:offerAttributes": {
-              "@context": "https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/draft/schema/EvChargingOffer/v1/context.jsonld",
+              "@context": "https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/main/schema/EvChargingOffer/v1/context.jsonld",
               "@type": "ChargingOffer",
               "buyerFinderFee": {
                 "feeType": "PERCENTAGE",
@@ -1551,7 +1551,7 @@
             "beckn:provider": "greencharge-koramangala"
           },
           {
-            "@context": "https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/draft/schema/core/v2/context.jsonld",
+            "@context": "https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/main/schema/core/v2/context.jsonld",
             "@type": "beckn:Offer",
             "beckn:id": "offer-type2-22kw-blr-001",
             "beckn:descriptor": {
@@ -1582,7 +1582,7 @@
               "BANK_TRANSFER"
             ],
             "beckn:offerAttributes": {
-              "@context": "https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/draft/schema/EvChargingOffer/v1/context.jsonld",
+              "@context": "https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/main/schema/EvChargingOffer/v1/context.jsonld",
               "@type": "ChargingOffer",
               "buyerFinderFee": {
                 "feeType": "PERCENTAGE",
@@ -1593,7 +1593,7 @@
             "beckn:provider": "powergrid-indiranagar"
           },
           {
-            "@context": "https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/draft/schema/core/v2/context.jsonld",
+            "@context": "https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/main/schema/core/v2/context.jsonld",
             "@type": "beckn:Offer",
             "beckn:id": "offer-chademo-50kw-blr-001",
             "beckn:descriptor": {
@@ -1622,7 +1622,7 @@
               "WALLET"
             ],
             "beckn:offerAttributes": {
-              "@context": "https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/draft/schema/EvChargingOffer/v1/context.jsonld",
+              "@context": "https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/main/schema/EvChargingOffer/v1/context.jsonld",
               "@type": "ChargingOffer",
               "buyerFinderFee": {
                 "feeType": "FIXED",
@@ -1633,7 +1633,7 @@
             "beckn:provider": "globalcharge-network"
           },
           {
-            "@context": "https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/draft/schema/core/v2/context.jsonld",
+            "@context": "https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/main/schema/core/v2/context.jsonld",
             "@type": "beckn:Offer",
             "beckn:id": "offer-ccs2-60kw-che-001",
             "beckn:descriptor": {
@@ -1663,7 +1663,7 @@
               "WALLET"
             ],
             "beckn:offerAttributes": {
-              "@context": "https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/draft/schema/EvChargingOffer/v1/context.jsonld",
+              "@context": "https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/main/schema/EvChargingOffer/v1/context.jsonld",
               "@type": "ChargingOffer",
               "buyerFinderFee": {
                 "feeType": "PERCENTAGE",
@@ -1674,7 +1674,7 @@
             "beckn:provider": "chargepoint-chennai"
           },
           {
-            "@context": "https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/draft/schema/core/v2/context.jsonld",
+            "@context": "https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/main/schema/core/v2/context.jsonld",
             "@type": "beckn:Offer",
             "beckn:id": "offer-ccs2-120kw-che-002",
             "beckn:descriptor": {
@@ -1705,7 +1705,7 @@
               "BANK_TRANSFER"
             ],
             "beckn:offerAttributes": {
-              "@context": "https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/draft/schema/EvChargingOffer/v1/context.jsonld",
+              "@context": "https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/main/schema/EvChargingOffer/v1/context.jsonld",
               "@type": "ChargingOffer",
               "buyerFinderFee": {
                 "feeType": "PERCENTAGE",
@@ -1716,7 +1716,7 @@
             "beckn:provider": "greencharge-adyar"
           },
           {
-            "@context": "https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/draft/schema/core/v2/context.jsonld",
+            "@context": "https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/main/schema/core/v2/context.jsonld",
             "@type": "beckn:Offer",
             "beckn:id": "offer-type2-22kw-che-001",
             "beckn:descriptor": {
@@ -1747,7 +1747,7 @@
               "BANK_TRANSFER"
             ],
             "beckn:offerAttributes": {
-              "@context": "https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/draft/schema/EvChargingOffer/v1/context.jsonld",
+              "@context": "https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/main/schema/EvChargingOffer/v1/context.jsonld",
               "@type": "ChargingOffer",
               "buyerFinderFee": {
                 "feeType": "PERCENTAGE",
@@ -1758,7 +1758,7 @@
             "beckn:provider": "powergrid-anna-nagar"
           },
           {
-            "@context": "https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/draft/schema/core/v2/context.jsonld",
+            "@context": "https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/main/schema/core/v2/context.jsonld",
             "@type": "beckn:Offer",
             "beckn:id": "offer-gbt-75kw-che-001",
             "beckn:descriptor": {
@@ -1787,7 +1787,7 @@
               "CREDIT_CARD"
             ],
             "beckn:offerAttributes": {
-              "@context": "https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/draft/schema/EvChargingOffer/v1/context.jsonld",
+              "@context": "https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/main/schema/EvChargingOffer/v1/context.jsonld",
               "@type": "ChargingOffer",
               "buyerFinderFee": {
                 "feeType": "PERCENTAGE",
@@ -1798,7 +1798,7 @@
             "beckn:provider": "futurecharge-chennai"
           },
           {
-            "@context": "https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/draft/schema/core/v2/context.jsonld",
+            "@context": "https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/main/schema/core/v2/context.jsonld",
             "@type": "beckn:Offer",
             "beckn:id": "offer-ccs2-60kw-mum-001",
             "beckn:descriptor": {
@@ -1828,7 +1828,7 @@
               "WALLET"
             ],
             "beckn:offerAttributes": {
-              "@context": "https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/draft/schema/EvChargingOffer/v1/context.jsonld",
+              "@context": "https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/main/schema/EvChargingOffer/v1/context.jsonld",
               "@type": "ChargingOffer",
               "buyerFinderFee": {
                 "feeType": "PERCENTAGE",
@@ -1839,7 +1839,7 @@
             "beckn:provider": "ecopower-mumbai"
           },
           {
-            "@context": "https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/draft/schema/core/v2/context.jsonld",
+            "@context": "https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/main/schema/core/v2/context.jsonld",
             "@type": "beckn:Offer",
             "beckn:id": "offer-ccs2-120kw-mum-002",
             "beckn:descriptor": {
@@ -1870,7 +1870,7 @@
               "BANK_TRANSFER"
             ],
             "beckn:offerAttributes": {
-              "@context": "https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/draft/schema/EvChargingOffer/v1/context.jsonld",
+              "@context": "https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/main/schema/EvChargingOffer/v1/context.jsonld",
               "@type": "ChargingOffer",
               "buyerFinderFee": {
                 "feeType": "PERCENTAGE",
@@ -1881,7 +1881,7 @@
             "beckn:provider": "greencharge-andheri"
           },
           {
-            "@context": "https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/draft/schema/core/v2/context.jsonld",
+            "@context": "https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/main/schema/core/v2/context.jsonld",
             "@type": "beckn:Offer",
             "beckn:id": "offer-type2-22kw-mum-001",
             "beckn:descriptor": {
@@ -1912,7 +1912,7 @@
               "BANK_TRANSFER"
             ],
             "beckn:offerAttributes": {
-              "@context": "https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/draft/schema/EvChargingOffer/v1/context.jsonld",
+              "@context": "https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/main/schema/EvChargingOffer/v1/context.jsonld",
               "@type": "ChargingOffer",
               "buyerFinderFee": {
                 "feeType": "PERCENTAGE",
@@ -1923,7 +1923,7 @@
             "beckn:provider": "powergrid-powai"
           },
           {
-            "@context": "https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/draft/schema/core/v2/context.jsonld",
+            "@context": "https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/main/schema/core/v2/context.jsonld",
             "@type": "beckn:Offer",
             "beckn:id": "offer-chademo-50kw-mum-001",
             "beckn:descriptor": {
@@ -1952,7 +1952,7 @@
               "WALLET"
             ],
             "beckn:offerAttributes": {
-              "@context": "https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/draft/schema/EvChargingOffer/v1/context.jsonld",
+              "@context": "https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/main/schema/EvChargingOffer/v1/context.jsonld",
               "@type": "ChargingOffer",
               "buyerFinderFee": {
                 "feeType": "FIXED",
@@ -1963,7 +1963,7 @@
             "beckn:provider": "globalcharge-vashi"
           },
           {
-            "@context": "https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/draft/schema/core/v2/context.jsonld",
+            "@context": "https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/main/schema/core/v2/context.jsonld",
             "@type": "beckn:Offer",
             "beckn:id": "offer-ccs2-60kw-del-001",
             "beckn:descriptor": {
@@ -1993,7 +1993,7 @@
               "WALLET"
             ],
             "beckn:offerAttributes": {
-              "@context": "https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/draft/schema/EvChargingOffer/v1/context.jsonld",
+              "@context": "https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/main/schema/EvChargingOffer/v1/context.jsonld",
               "@type": "ChargingOffer",
               "buyerFinderFee": {
                 "feeType": "PERCENTAGE",
@@ -2004,7 +2004,7 @@
             "beckn:provider": "ecopower-delhi"
           },
           {
-            "@context": "https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/draft/schema/core/v2/context.jsonld",
+            "@context": "https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/main/schema/core/v2/context.jsonld",
             "@type": "beckn:Offer",
             "beckn:id": "offer-ccs2-120kw-del-002",
             "beckn:descriptor": {
@@ -2035,7 +2035,7 @@
               "BANK_TRANSFER"
             ],
             "beckn:offerAttributes": {
-              "@context": "https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/draft/schema/EvChargingOffer/v1/context.jsonld",
+              "@context": "https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/main/schema/EvChargingOffer/v1/context.jsonld",
               "@type": "ChargingOffer",
               "buyerFinderFee": {
                 "feeType": "PERCENTAGE",
@@ -2046,7 +2046,7 @@
             "beckn:provider": "greencharge-gurgaon"
           },
           {
-            "@context": "https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/draft/schema/core/v2/context.jsonld",
+            "@context": "https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/main/schema/core/v2/context.jsonld",
             "@type": "beckn:Offer",
             "beckn:id": "offer-type2-22kw-del-001",
             "beckn:descriptor": {
@@ -2077,7 +2077,7 @@
               "BANK_TRANSFER"
             ],
             "beckn:offerAttributes": {
-              "@context": "https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/draft/schema/EvChargingOffer/v1/context.jsonld",
+              "@context": "https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/main/schema/EvChargingOffer/v1/context.jsonld",
               "@type": "ChargingOffer",
               "buyerFinderFee": {
                 "feeType": "PERCENTAGE",

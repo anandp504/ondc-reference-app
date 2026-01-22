@@ -41,25 +41,25 @@ export default function DiscoverForm({ onDiscover, onLoading, defaultRequest, ca
       return (saved === 'text' || saved === 'filters') ? saved as SearchMode : 'filters';
     })()
   );
-  
+
   // Track previous category to detect actual category changes
   const previousCategoryRef = useRef<string | null>(null);
   // Track if user has manually modified expression/coordinates
   const expressionModifiedRef = useRef(false);
   const coordinatesModifiedRef = useRef(false);
-  
+
   // Helper to get persisted or default expression
   const getInitialExpression = (cat: 'grocery' | 'pizza'): string => {
     const saved = sessionStorage.getItem(`discoverForm_expression_${cat}`);
     return saved || getDefaultExpression(cat);
   };
-  
+
   // Helper to get persisted or default coordinates
   const getInitialCoordinates = (cat: 'grocery' | 'pizza'): string => {
     const saved = sessionStorage.getItem(`discoverForm_coordinates_${cat}`);
     return saved || getDefaultCoordinates(cat);
   };
-  
+
   // Helper to get persisted or default text search
   const getInitialTextSearch = (cat: 'grocery' | 'pizza'): string => {
     const saved = sessionStorage.getItem(`discoverForm_textSearch_${cat}`);
@@ -67,7 +67,7 @@ export default function DiscoverForm({ onDiscover, onLoading, defaultRequest, ca
     const textFallback = cat === 'grocery' ? 'organic rice basmati' : 'veg pizza margherita';
     return defaultRequest?.message.text_search || textFallback;
   };
-  
+
   const [searchMode, setSearchMode] = useState<SearchMode>(searchModeRef.current);
   const [textSearch, setTextSearch] = useState(() => getInitialTextSearch(category));
   const [expression, setExpression] = useState(() => getInitialExpression(category));
@@ -95,7 +95,7 @@ export default function DiscoverForm({ onDiscover, onLoading, defaultRequest, ca
 
     // Only reset expression/coordinates/textSearch if category actually changed
     const categoryChanged = previousCategoryRef.current !== null && previousCategoryRef.current !== category;
-    
+
     if (categoryChanged) {
       // Category changed - load persisted values for the new category, or use defaults
       const newExpression = getInitialExpression(category);
@@ -117,9 +117,9 @@ export default function DiscoverForm({ onDiscover, onLoading, defaultRequest, ca
       setTextSearch(initialTextSearch);
     }
     // If category hasn't changed, preserve current values (user may have modified them)
-    
+
     previousCategoryRef.current = category;
-    
+
     // Note: We intentionally don't reset searchMode here to preserve user's choice
     // The searchMode state (whether 'filters' or 'text') persists across category changes
     // This ensures consistent behavior whether you're in Filters or Text Search mode
@@ -132,49 +132,49 @@ export default function DiscoverForm({ onDiscover, onLoading, defaultRequest, ca
       setCoordinateError(null);
       return true; // Empty is valid (optional field)
     }
-    
+
     // Remove spaces and split by comma
     const parts = value.replace(/\s/g, '').split(',');
-    
+
     if (parts.length !== 2) {
       setCoordinateError('Please enter coordinates as: latitude,longitude (e.g., 19.1747,72.8063)');
       return false;
     }
-    
+
     const [lat, lon] = parts;
     const latNum = parseFloat(lat);
     const lonNum = parseFloat(lon);
-    
+
     if (isNaN(latNum) || isNaN(lonNum)) {
       setCoordinateError('Both values must be valid numbers');
       return false;
     }
-    
+
     // Validate latitude range (-90 to 90)
     if (latNum < -90 || latNum > 90) {
       setCoordinateError('Latitude must be between -90 and 90');
       return false;
     }
-    
+
     // Validate longitude range (-180 to 180)
     if (lonNum < -180 || lonNum > 180) {
       setCoordinateError('Longitude must be between -180 and 180');
       return false;
     }
-    
+
     setCoordinateError(null);
     return true;
   };
 
   const handleCoordinatesChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    
+
     // Only allow numbers, commas, spaces, and minus signs
     const validPattern = /^[\d\s,.-]*$/;
     if (!validPattern.test(value)) {
       return; // Don't update if invalid characters
     }
-    
+
     // Mark coordinates as manually modified
     coordinatesModifiedRef.current = true;
     setCoordinates(value);
@@ -185,7 +185,7 @@ export default function DiscoverForm({ onDiscover, onLoading, defaultRequest, ca
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     // Validate inputs based on mode
     if (searchMode === 'text') {
       // Ensure text search is not empty (only if using API)
@@ -201,7 +201,7 @@ export default function DiscoverForm({ onDiscover, onLoading, defaultRequest, ca
         onDiscover(null, coordinateError || 'Invalid coordinates');
         return;
       }
-      
+
       // At least one of expression or coordinates should be provided
       if (!expression.trim() && !coordinates.trim()) {
         onDiscover(null, 'Please provide either an expression or coordinates (or both)');
@@ -222,7 +222,7 @@ export default function DiscoverForm({ onDiscover, onLoading, defaultRequest, ca
 
     // Build message based on search mode
     const message: DiscoverRequest['message'] = {};
-    
+
     if (searchMode === 'text') {
       message.text_search = textSearch.trim();
     } else {
@@ -233,7 +233,7 @@ export default function DiscoverForm({ onDiscover, onLoading, defaultRequest, ca
           expression: expression.trim()
         };
       }
-      
+
       if (coordinates.trim()) {
         const coords = coordinates.replace(/\s/g, '').split(',').map(Number);
         message.spatial = [
@@ -263,8 +263,8 @@ export default function DiscoverForm({ onDiscover, onLoading, defaultRequest, ca
         timestamp: new Date().toISOString(),
         ttl: 'PT30S',
         schema_context: category === 'grocery'
-          ? ['https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/draft/schema/GroceryItem/v1/context.jsonld#GroceryItem']
-          : ['https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/draft/schema/FoodAndBeverageItem/v1/context.jsonld#FoodAndBeverageItem']
+          ? ['https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/main/schema/GroceryItem/v1/context.jsonld#GroceryItem']
+          : ['https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/main/schema/FoodAndBeverageItem/v1/context.jsonld#FoodAndBeverageItem']
       },
       message
     };
@@ -272,7 +272,7 @@ export default function DiscoverForm({ onDiscover, onLoading, defaultRequest, ca
     try {
       console.log('Making API request to:', DISCOVER_API_URL);
       console.log('Request payload:', JSON.stringify(request, null, 2));
-      
+
       const response = await fetch(DISCOVER_API_URL, {
         method: 'POST',
         headers: {
@@ -295,7 +295,7 @@ export default function DiscoverForm({ onDiscover, onLoading, defaultRequest, ca
       onDiscover(catalogResponse, null);
     } catch (error: any) {
       console.error('Discover API error:', error);
-      
+
       // Provide more specific error messages
       let errorMessage = 'Failed to fetch catalog from API';
       if (error instanceof TypeError && error.message === 'Failed to fetch') {
@@ -303,7 +303,7 @@ export default function DiscoverForm({ onDiscover, onLoading, defaultRequest, ca
       } else if (error?.message) {
         errorMessage = error.message;
       }
-      
+
       onDiscover(null, errorMessage);
     } finally {
       setIsLoading(false);
@@ -313,7 +313,7 @@ export default function DiscoverForm({ onDiscover, onLoading, defaultRequest, ca
 
   const isFormValid = () => {
     if (useLocalCatalog) return true;
-    
+
     // Enable button if ANY input has a value
     if (searchMode === 'text') {
       return textSearch.trim().length > 0;
@@ -392,7 +392,7 @@ export default function DiscoverForm({ onDiscover, onLoading, defaultRequest, ca
                 // Persist to sessionStorage
                 sessionStorage.setItem(`discoverForm_expression_${category}`, value);
               }}
-              placeholder={category === 'grocery' 
+              placeholder={category === 'grocery'
                 ? 'e.g., $[?(@.beckn:itemAttributes.nutritionalInfo.nutrient=="Sodium" && @.beckn:itemAttributes.dietaryClassification == "veg")]'
                 : 'e.g., $[?(@.beckn:itemAttributes.size==\'Regular\' && @.beckn:itemAttributes.toppings[*] == \'Olives\')]'}
               rows={6}
@@ -447,9 +447,9 @@ export default function DiscoverForm({ onDiscover, onLoading, defaultRequest, ca
           </div>
         </>
       )}
-      
-      <button 
-        type="submit" 
+
+      <button
+        type="submit"
         disabled={isLoading || (!useLocalCatalog && !isFormValid())}
       >
         {isLoading ? 'Discovering...' : 'Discover'}

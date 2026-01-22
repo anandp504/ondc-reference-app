@@ -27,30 +27,30 @@ export default function EVChargingDiscoverForm({ onDiscover, onLoading, defaultR
       return (saved === 'text' || saved === 'filters') ? saved as SearchMode : 'filters';
     })()
   );
-  
+
   // Track if user has manually modified expression/coordinates
   const expressionModifiedRef = useRef(false);
   const coordinatesModifiedRef = useRef(false);
-  
+
   // Helper to get persisted or default expression
   const getInitialExpression = (): string => {
     const saved = sessionStorage.getItem('evChargingDiscoverForm_expression');
     return saved || DEFAULT_EXPRESSION;
   };
-  
+
   // Helper to get persisted or default coordinates
   const getInitialCoordinates = (): string => {
     const saved = sessionStorage.getItem('evChargingDiscoverForm_coordinates');
     return saved || DEFAULT_COORDINATES;
   };
-  
+
   // Helper to get persisted or default text search
   const getInitialTextSearch = (): string => {
     const saved = sessionStorage.getItem('evChargingDiscoverForm_textSearch');
     if (saved) return saved;
     return defaultRequest?.message.text_search || 'CCS2 fast charging station';
   };
-  
+
   const [searchMode, setSearchMode] = useState<SearchMode>(searchModeRef.current);
   const [textSearch, setTextSearch] = useState(() => getInitialTextSearch());
   const [expression, setExpression] = useState(() => getInitialExpression());
@@ -72,49 +72,49 @@ export default function EVChargingDiscoverForm({ onDiscover, onLoading, defaultR
       setCoordinateError(null);
       return true; // Empty is valid (optional field)
     }
-    
+
     // Remove spaces and split by comma
     const parts = value.replace(/\s/g, '').split(',');
-    
+
     if (parts.length !== 2) {
       setCoordinateError('Please enter coordinates as: latitude,longitude (e.g., 13.0820,80.2750)');
       return false;
     }
-    
+
     const [lat, lon] = parts;
     const latNum = parseFloat(lat);
     const lonNum = parseFloat(lon);
-    
+
     if (isNaN(latNum) || isNaN(lonNum)) {
       setCoordinateError('Both values must be valid numbers');
       return false;
     }
-    
+
     // Validate latitude range (-90 to 90)
     if (latNum < -90 || latNum > 90) {
       setCoordinateError('Latitude must be between -90 and 90');
       return false;
     }
-    
+
     // Validate longitude range (-180 to 180)
     if (lonNum < -180 || lonNum > 180) {
       setCoordinateError('Longitude must be between -180 and 180');
       return false;
     }
-    
+
     setCoordinateError(null);
     return true;
   };
 
   const handleCoordinatesChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    
+
     // Only allow numbers, commas, spaces, and minus signs
     const validPattern = /^[\d\s,.-]*$/;
     if (!validPattern.test(value)) {
       return; // Don't update if invalid characters
     }
-    
+
     // Mark coordinates as manually modified
     coordinatesModifiedRef.current = true;
     setCoordinates(value);
@@ -125,7 +125,7 @@ export default function EVChargingDiscoverForm({ onDiscover, onLoading, defaultR
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     // Validate inputs based on mode
     if (searchMode === 'text') {
       // Ensure text search is not empty (only if using API)
@@ -140,7 +140,7 @@ export default function EVChargingDiscoverForm({ onDiscover, onLoading, defaultR
         onDiscover(null, coordinateError || 'Invalid coordinates');
         return;
       }
-      
+
       // At least one of expression or coordinates should be provided
       if (!expression.trim() && !coordinates.trim()) {
         onDiscover(null, 'Please provide either an expression or coordinates (or both)');
@@ -161,7 +161,7 @@ export default function EVChargingDiscoverForm({ onDiscover, onLoading, defaultR
 
     // Build message based on search mode
     const message: DiscoverRequest['message'] = {};
-    
+
     if (searchMode === 'text') {
       message.text_search = textSearch.trim();
     } else {
@@ -172,7 +172,7 @@ export default function EVChargingDiscoverForm({ onDiscover, onLoading, defaultR
           expression: expression.trim()
         };
       }
-      
+
       if (coordinates.trim()) {
         const coords = coordinates.replace(/\s/g, '').split(',').map(Number);
         message.spatial = [
@@ -202,7 +202,7 @@ export default function EVChargingDiscoverForm({ onDiscover, onLoading, defaultR
         timestamp: new Date().toISOString(),
         ttl: 'PT30S',
         schema_context: [
-          'https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/draft/schema/EvChargingService/v1/context.jsonld#ChargingService'
+          'https://raw.githubusercontent.com/beckn/protocol-specifications-new/refs/heads/main/schema/EvChargingService/v1/context.jsonld#ChargingService'
         ]
       },
       message
@@ -211,7 +211,7 @@ export default function EVChargingDiscoverForm({ onDiscover, onLoading, defaultR
     try {
       console.log('Making API request to:', DISCOVER_API_URL);
       console.log('Request payload:', JSON.stringify(request, null, 2));
-      
+
       const response = await fetch(DISCOVER_API_URL, {
         method: 'POST',
         headers: {
@@ -234,7 +234,7 @@ export default function EVChargingDiscoverForm({ onDiscover, onLoading, defaultR
       onDiscover(catalogResponse, null);
     } catch (error: any) {
       console.error('Discover API error:', error);
-      
+
       // Provide more specific error messages
       let errorMessage = 'Failed to fetch catalog from API';
       if (error instanceof TypeError && error.message === 'Failed to fetch') {
@@ -242,7 +242,7 @@ export default function EVChargingDiscoverForm({ onDiscover, onLoading, defaultR
       } else if (error?.message) {
         errorMessage = error.message;
       }
-      
+
       onDiscover(null, errorMessage);
     } finally {
       setIsLoading(false);
@@ -252,7 +252,7 @@ export default function EVChargingDiscoverForm({ onDiscover, onLoading, defaultR
 
   const isFormValid = () => {
     if (useLocalCatalog) return true;
-    
+
     // Enable button if ANY input has a value
     if (searchMode === 'text') {
       return textSearch.trim().length > 0;
@@ -384,9 +384,9 @@ export default function EVChargingDiscoverForm({ onDiscover, onLoading, defaultR
           </div>
         </>
       )}
-      
-      <button 
-        type="submit" 
+
+      <button
+        type="submit"
         disabled={isLoading || (!useLocalCatalog && !isFormValid())}
       >
         {isLoading ? 'Discovering...' : 'Discover'}
