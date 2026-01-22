@@ -13,7 +13,7 @@ interface CatalogPublishProps { }
 
 export default function CatalogPublish({ }: CatalogPublishProps) {
   const [file, setFile] = useState<File | null>(null);
-  const [jsonContent, setJsonContent] = useState<any[] | null>(null);
+  const [jsonContent, setJsonContent] = useState<any | null>(null);
 
   const [isDragging, setIsDragging] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
@@ -40,8 +40,9 @@ export default function CatalogPublish({ }: CatalogPublishProps) {
         const text = e.target?.result as string;
         const parsed = JSON.parse(text);
 
-        if (!Array.isArray(parsed)) {
-          throw new Error('JSON file must contain an array of catalog objects');
+        if (!Array.isArray(parsed) && !parsed.context) {
+          // Optional: warning or looser check
+          // For now, accept it. If it's an object, it might be the payload.
         }
 
         setJsonContent(parsed);
@@ -107,25 +108,32 @@ export default function CatalogPublish({ }: CatalogPublishProps) {
     setUploadMessage('');
 
     try {
-      const timestamp = new Date().toISOString();
-      const messageId = generateUUID();
-      const transactionId = generateUUID();
+      let payload;
 
-      const payload = {
-        context: {
-          version: "2.0.0",
-          action: "catalog_publish",
-          timestamp: timestamp,
-          message_id: messageId,
-          transaction_id: transactionId,
-          ttl: "PT30S",
-          bpp_id: BPP_ID,
-          bpp_uri: BPP_URI
-        },
-        message: {
-          catalogs: jsonContent
-        }
-      };
+      // Check if the uploaded JSON is already a full payload (has context)
+      if (!Array.isArray(jsonContent) && jsonContent.context) {
+        payload = jsonContent;
+      } else {
+        const timestamp = new Date().toISOString();
+        const messageId = generateUUID();
+        const transactionId = generateUUID();
+
+        payload = {
+          context: {
+            version: "2.0.0",
+            action: "catalog_publish",
+            timestamp: timestamp,
+            message_id: messageId,
+            transaction_id: transactionId,
+            ttl: "PT30S",
+            bpp_id: BPP_ID,
+            bpp_uri: BPP_URI
+          },
+          message: {
+            catalogs: Array.isArray(jsonContent) ? jsonContent : [jsonContent]
+          }
+        };
+      }
 
       console.log('Publishing catalog payload:', JSON.stringify(payload, null, 2));
 
@@ -217,11 +225,23 @@ export default function CatalogPublish({ }: CatalogPublishProps) {
         </div>
       </div>
 
-      {/* JSON Preview - Simple valid check */}
+      {/* JSON Preview - Smart check */}
       {file && jsonContent && (
         <div className="csv-preview-section">
           <div className="csv-preview-note" style={{ borderTop: 'none', border: '1px solid #e2e8f0', borderRadius: '0.5rem' }}>
-            ✓ Valid JSON detected. Contains <strong>{jsonContent.length}</strong> catalog object(s) with <strong>{jsonContent.reduce((acc, cat) => acc + (cat['beckn:items']?.length || 0), 0)}</strong> total items.
+            {Array.isArray(jsonContent) ? (
+              <>
+                ✓ Valid JSON detected. Contains <strong>{jsonContent.length}</strong> catalog object(s) with <strong>{jsonContent.reduce((acc: number, cat: any) => acc + (cat['beckn:items']?.length || 0), 0)}</strong> total items.
+              </>
+            ) : (jsonContent.context ? (
+              <>
+                ✓ Full Request Payload detected. (Context action: <strong>{jsonContent.context.action}</strong>). Contains <strong>{jsonContent.message?.catalogs?.length || 0}</strong> catalog object(s) with <strong>{jsonContent.message?.catalogs?.reduce((acc: number, cat: any) => acc + (cat['beckn:items']?.length || 0), 0)}</strong> total items.
+              </>
+            ) : (
+              <>
+                ✓ Valid JSON detected. (Single Object Mode)
+              </>
+            ))}
           </div>
         </div>
       )}
